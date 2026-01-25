@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Headphones band (shifted left to make room for waves) -->
+  <path d="M10 3C5.58 3 2 6.58 2 11v5c0 1.1.9 2 2 2h1.5v-7H4v-1c0-3.31 2.69-6 6-6s6 2.69 6 6v1h-1.5v7H16c1.1 0 2-.9 2-2v-5c0-4.42-3.58-8-8-8z"
+        fill="#4CAF50"/>
+  <!-- Left ear cup -->
+  <rect x="3" y="11" width="2.5" height="7" rx="1" fill="#4CAF50"/>
+  <!-- Right ear cup -->
+  <rect x="14.5" y="11" width="2.5" height="7" rx="1" fill="#4CAF50"/>
+  <!-- Sound waves (output indicator) -->
+  <path d="M19 9c1.5 1.5 1.5 4.5 0 6" fill="none" stroke="#4CAF50" stroke-width="1.8" stroke-linecap="round"/>
+  <path d="M21.5 6.5c2.5 2.75 2.5 8.25 0 11" fill="none" stroke="#4CAF50" stroke-width="1.8" stroke-linecap="round"/>
+</svg>
