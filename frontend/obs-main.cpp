@@ -314,7 +314,7 @@ static void move_to_xdg(void)
 	if (!home)
 		return;
 
-	if (snprintf(old_path, sizeof(old_path), "%s/.obs-studio", home) <= 0)
+	if (snprintf(old_path, sizeof(old_path), "%s/.obs-12tracks-multilingual", home) <= 0)
 		return;
 
 	/* make base xdg path if it doesn't already exist */
@@ -323,7 +323,7 @@ static void move_to_xdg(void)
 	if (os_mkdirs(new_path) == MKDIR_ERROR)
 		return;
 
-	if (GetAppConfigPath(new_path, sizeof(new_path), "obs-studio") <= 0)
+	if (GetAppConfigPath(new_path, sizeof(new_path), "obs-12tracks-multilingual") <= 0)
 		return;
 
 	if (os_file_exists(old_path) && !os_file_exists(new_path)) {
@@ -400,10 +400,10 @@ static void create_log_file(fstream &logFile)
 {
 	stringstream dst;
 
-	get_last_log(false, "obs-studio/logs", lastLogFile);
+	get_last_log(false, "obs-12tracks-multilingual/logs", lastLogFile);
 
 	currentLogFile = GenerateTimeDateFilename("txt");
-	dst << "obs-studio/logs/" << currentLogFile.c_str();
+	dst << "obs-12tracks-multilingual/logs/" << currentLogFile.c_str();
 
 	BPtr<char> path(GetAppConfigPathPtr(dst.str().c_str()));
 
@@ -416,7 +416,7 @@ static void create_log_file(fstream &logFile)
 #endif
 
 	if (logFile.is_open()) {
-		delete_oldest_file(false, "obs-studio/logs");
+		delete_oldest_file(false, "obs-12tracks-multilingual/logs");
 		base_set_log_handler(do_log, &logFile);
 	} else {
 		blog(LOG_ERROR, "Failed to open log file");
@@ -456,7 +456,7 @@ static void SaveProfilerData(const ProfilerSnapshot &snap)
 
 #define LITERAL_SIZE(x) x, (sizeof(x) - 1)
 	ostringstream dst;
-	dst.write(LITERAL_SIZE("obs-studio/profiler_data/"));
+	dst.write(LITERAL_SIZE("obs-12tracks-multilingual/profiler_data/"));
 	dst.write(currentLogFile.c_str(), pos);
 	dst.write(LITERAL_SIZE(".csv.gz"));
 #undef LITERAL_SIZE
@@ -544,7 +544,7 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 		bool created_log = false;
 
 		program.AppInit();
-		delete_oldest_file(false, "obs-studio/profiler_data");
+		delete_oldest_file(false, "obs-12tracks-multilingual/profiler_data");
 
 		OBSTranslator translator;
 		program.installTranslator(&translator);
@@ -722,7 +722,7 @@ static void main_crash_handler(const char *format, va_list args, void * /* param
 	vsnprintf(text, MAX_CRASH_REPORT_SIZE, format, args);
 	text[MAX_CRASH_REPORT_SIZE - 1] = 0;
 
-	string crashFilePath = "obs-studio/crashes";
+	string crashFilePath = "obs-12tracks-multilingual/crashes";
 
 	delete_oldest_file(true, crashFilePath.c_str());
 

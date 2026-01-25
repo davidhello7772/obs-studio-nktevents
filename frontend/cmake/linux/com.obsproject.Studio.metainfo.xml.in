@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop">
-  <id>com.obsproject.Studio</id>
-  <launchable type="desktop-id">com.obsproject.Studio.desktop</launchable>
+  <id>com.12tracksmultilingual.Studio</id>
+  <launchable type="desktop-id">com.12tracksmultilingual.Studio.desktop</launchable>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0-or-later</project_license>
-  <name>OBS Studio</name>
-  <developer id="com.obsproject">
-    <name>OBS Project</name>
+  <name>OBS 12 Tracks Multilingual</name>
+  <developer id="com.12tracksmultilingual">
+    <name>12 Tracks Multilingual</name>
   </developer>
   <summary>Live stream and record videos</summary>
   <description>

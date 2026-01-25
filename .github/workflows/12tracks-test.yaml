@@ -1,11 +1,11 @@
-name: NKT Test Build
-run-name: NKT Test Build 🧪
+name: 12 Tracks Test Build
+run-name: 12 Tracks Test Build 🧪
 
 on:
   workflow_dispatch:
   push:
     branches:
-      - 'nkt-*'
+      - '12tracks-*'
 
 jobs:
   test:

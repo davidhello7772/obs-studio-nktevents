@@ -1,10 +1,10 @@
 [Desktop Entry]
 Version=1.0
-Name=OBS Studio
+Name=OBS 12 Tracks Multilingual
 GenericName=Streaming/Recording Software
-Comment=Free and Open Source Streaming/Recording Software
+Comment=Free and Open Source Streaming/Recording Software with 12 Audio Tracks
 Exec=obs
-Icon=com.obsproject.Studio
+Icon=com.12tracksmultilingual.Studio
 Terminal=false
 Type=Application
 Categories=AudioVideo;Recorder;
