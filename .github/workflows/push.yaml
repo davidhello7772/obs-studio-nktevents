@@ -1,15 +1,7 @@
-name: Push
-run-name: ${{ github.ref_name }} push run 🚀
+name: Build
+run-name: Manual build 🔨
 on:
-  push:
-    paths-ignore:
-      - '**.md'
-    branches:
-      - master
-      - 'release/**'
-      - 'nkt-*'
-    tags:
-      - '*'
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
