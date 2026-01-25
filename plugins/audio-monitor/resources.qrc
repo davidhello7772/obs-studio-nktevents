@@ -1,0 +1,18 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/audio-monitor">
+        <!-- Filter visibility icons -->
+        <file>images/visible.svg</file>
+        <file>images/invisible.svg</file>
+        <!-- Type button icons -->
+        <file>images/type-normal.svg</file>
+        <file>images/type-mix.svg</file>
+        <file>images/type-translated.svg</file>
+        <file>images/type-reference.svg</file>
+        <!-- Color picker icon -->
+        <file>images/color-picker.svg</file>
+        <!-- Monitor button icons -->
+        <file>images/monitor-off.svg</file>
+        <file>images/monitor-and-output.svg</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <!-- Palette shape -->
+  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c1.1 0 2-.9 2-2 0-.53-.21-1.01-.55-1.38-.34-.36-.55-.84-.55-1.37 0-1.1.9-2 2-2h2.36c3.03 0 5.49-2.46 5.49-5.49C22.85 5.71 18.08 2 12 2z" fill="white" stroke="#666" stroke-width="1"/>
+  <!-- Color dots -->
+  <circle cx="7" cy="10" r="2" fill="#F44336"/>
+  <circle cx="10" cy="6" r="2" fill="#4CAF50"/>
+  <circle cx="15" cy="6" r="2" fill="#2196F3"/>
+  <circle cx="18" cy="10" r="2" fill="#FF9800"/>
+</svg>
