@@ -278,6 +278,58 @@ static void PopulateAdvancedBitrates(initializer_list<QComboBox *> boxes, const 
 	}
 }
 
+static void PopulateLanguageList(QComboBox *combo)
+{
+	combo->clear();
+	combo->addItem("", "");
+	combo->addItem("English", "eng");
+	combo->addItem("Spanish", "spa");
+	combo->addItem("French", "fra");
+	combo->addItem("German", "deu");
+	combo->addItem("Portuguese", "por");
+	combo->addItem("Italian", "ita");
+	combo->addItem("Greek", "ell");
+	combo->addItem("Russian", "rus");
+	combo->addItem("Japanese", "jpn");
+	combo->addItem("Korean", "kor");
+	combo->addItem("Chinese", "zho");
+	combo->addItem("Mandarin", "cmn");
+	combo->addItem("Cantonese", "yue");
+	combo->addItem("Vietnamese", "vie");
+	combo->addItem("Undetermined", "und");
+}
+
+static void SetLanguageComboValue(QComboBox *combo, const char *value)
+{
+	if (!value || !*value) {
+		combo->setCurrentIndex(0);
+		return;
+	}
+
+	int idx = combo->findData(QString(value));
+	if (idx != -1) {
+		combo->setCurrentIndex(idx);
+	} else {
+		// Custom value not in list - set the editable text directly
+		combo->setCurrentText(QString(value));
+	}
+}
+
+static QString GetLanguageValue(QComboBox *combo)
+{
+	int idx = combo->currentIndex();
+	if (idx > 0) {
+		// Item from list - return the data (ISO code)
+		return combo->itemData(idx).toString();
+	} else if (idx == 0) {
+		// "None" selected
+		return QString();
+	} else {
+		// Custom text entered
+		return combo->currentText();
+	}
+}
+
 static std::tuple<int, int> aspect_ratio(int cx, int cy)
 {
 	int common = std::gcd(cx, cy);
@@ -530,6 +582,18 @@ OBSBasicSettings::OBSBasicSettings(QWidget *parent)
 	HookWidget(ui->advOutTrack11Name,    EDIT_CHANGED,   OUTPUTS_CHANGED);
 	HookWidget(ui->advOutTrack12Bitrate, COMBO_CHANGED,  OUTPUTS_CHANGED);
 	HookWidget(ui->advOutTrack12Name,    EDIT_CHANGED,   OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack1Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack2Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack3Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack4Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack5Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack6Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack7Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack8Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack9Lang,     CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack10Lang,    CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack11Lang,    CBEDIT_CHANGED, OUTPUTS_CHANGED);
+	HookWidget(ui->advOutTrack12Lang,    CBEDIT_CHANGED, OUTPUTS_CHANGED);
 	HookWidget(ui->advReplayBuf,         CHECK_CHANGED,  OUTPUTS_CHANGED);
 	HookWidget(ui->advRBSecMax,          SCROLL_CHANGED, OUTPUTS_CHANGED);
 	HookWidget(ui->advRBMegsMax,         SCROLL_CHANGED, OUTPUTS_CHANGED);
@@ -2283,6 +2347,18 @@ void OBSBasicSettings::LoadAdvOutputAudioSettings()
 	const char *name10 = config_get_string(main->Config(), "AdvOut", "Track10Name");
 	const char *name11 = config_get_string(main->Config(), "AdvOut", "Track11Name");
 	const char *name12 = config_get_string(main->Config(), "AdvOut", "Track12Name");
+	const char *lang1 = config_get_string(main->Config(), "AdvOut", "Track1Lang");
+	const char *lang2 = config_get_string(main->Config(), "AdvOut", "Track2Lang");
+	const char *lang3 = config_get_string(main->Config(), "AdvOut", "Track3Lang");
+	const char *lang4 = config_get_string(main->Config(), "AdvOut", "Track4Lang");
+	const char *lang5 = config_get_string(main->Config(), "AdvOut", "Track5Lang");
+	const char *lang6 = config_get_string(main->Config(), "AdvOut", "Track6Lang");
+	const char *lang7 = config_get_string(main->Config(), "AdvOut", "Track7Lang");
+	const char *lang8 = config_get_string(main->Config(), "AdvOut", "Track8Lang");
+	const char *lang9 = config_get_string(main->Config(), "AdvOut", "Track9Lang");
+	const char *lang10 = config_get_string(main->Config(), "AdvOut", "Track10Lang");
+	const char *lang11 = config_get_string(main->Config(), "AdvOut", "Track11Lang");
+	const char *lang12 = config_get_string(main->Config(), "AdvOut", "Track12Lang");
 
 	const char *encoder_id = config_get_string(main->Config(), "AdvOut", "AudioEncoder");
 	const char *rec_encoder_id = config_get_string(main->Config(), "AdvOut", "RecAudioEncoder");
@@ -2343,6 +2419,32 @@ void OBSBasicSettings::LoadAdvOutputAudioSettings()
 	ui->advOutTrack10Name->setText(name10);
 	ui->advOutTrack11Name->setText(name11);
 	ui->advOutTrack12Name->setText(name12);
+
+	PopulateLanguageList(ui->advOutTrack1Lang);
+	PopulateLanguageList(ui->advOutTrack2Lang);
+	PopulateLanguageList(ui->advOutTrack3Lang);
+	PopulateLanguageList(ui->advOutTrack4Lang);
+	PopulateLanguageList(ui->advOutTrack5Lang);
+	PopulateLanguageList(ui->advOutTrack6Lang);
+	PopulateLanguageList(ui->advOutTrack7Lang);
+	PopulateLanguageList(ui->advOutTrack8Lang);
+	PopulateLanguageList(ui->advOutTrack9Lang);
+	PopulateLanguageList(ui->advOutTrack10Lang);
+	PopulateLanguageList(ui->advOutTrack11Lang);
+	PopulateLanguageList(ui->advOutTrack12Lang);
+
+	SetLanguageComboValue(ui->advOutTrack1Lang, lang1);
+	SetLanguageComboValue(ui->advOutTrack2Lang, lang2);
+	SetLanguageComboValue(ui->advOutTrack3Lang, lang3);
+	SetLanguageComboValue(ui->advOutTrack4Lang, lang4);
+	SetLanguageComboValue(ui->advOutTrack5Lang, lang5);
+	SetLanguageComboValue(ui->advOutTrack6Lang, lang6);
+	SetLanguageComboValue(ui->advOutTrack7Lang, lang7);
+	SetLanguageComboValue(ui->advOutTrack8Lang, lang8);
+	SetLanguageComboValue(ui->advOutTrack9Lang, lang9);
+	SetLanguageComboValue(ui->advOutTrack10Lang, lang10);
+	SetLanguageComboValue(ui->advOutTrack11Lang, lang11);
+	SetLanguageComboValue(ui->advOutTrack12Lang, lang12);
 }
 
 void OBSBasicSettings::LoadOutputSettings()
@@ -3736,6 +3838,19 @@ void OBSBasicSettings::SaveOutputSettings()
 	SaveEdit(ui->advOutTrack10Name, "AdvOut", "Track10Name");
 	SaveEdit(ui->advOutTrack11Name, "AdvOut", "Track11Name");
 	SaveEdit(ui->advOutTrack12Name, "AdvOut", "Track12Name");
+
+	config_set_string(main->Config(), "AdvOut", "Track1Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack1Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track2Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack2Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track3Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack3Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track4Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack4Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track5Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack5Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track6Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack6Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track7Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack7Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track8Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack8Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track9Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack9Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track10Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack10Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track11Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack11Lang)));
+	config_set_string(main->Config(), "AdvOut", "Track12Lang", QT_TO_UTF8(GetLanguageValue(ui->advOutTrack12Lang)));
 
 	if (vodTrackCheckbox) {
 		SaveCheckBox(simpleVodTrack, "SimpleOutput", "VodTrackEnabled");
