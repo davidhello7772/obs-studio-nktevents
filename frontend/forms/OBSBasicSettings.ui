@@ -5028,6 +5028,29 @@
                                 </property>
                                </widget>
                               </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack1LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack1Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack1Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
                               <item row="0" column="0">
                                <widget class="QLabel" name="advOutTrack1BitrateLabel">
                                 <property name="minimumSize">
@@ -5187,6 +5210,29 @@
                                 </property>
                                </widget>
                               </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack2LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack2Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack2Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </widget>
                            </item>
@@ -5324,6 +5370,29 @@
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack3LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack3Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack3Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
                                 </property>
                                </widget>
                               </item>
@@ -5467,6 +5536,29 @@
                                 </property>
                                </widget>
                               </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack4LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack4Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack4Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </widget>
                            </item>
@@ -5604,6 +5696,29 @@
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack5LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack5Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack5Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
                                 </property>
                                </widget>
                               </item>
@@ -5747,6 +5862,29 @@
                                 </property>
                                </widget>
                               </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack6LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack6Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack6Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </widget>
                            </item>
@@ -5840,6 +5978,29 @@
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack7LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack7Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack7Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
                                 </property>
                                </widget>
                               </item>
@@ -5939,6 +6100,29 @@
                                 </property>
                                </widget>
                               </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack8LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack8Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack8Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </widget>
                            </item>
@@ -6032,6 +6216,29 @@
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack9LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack9Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack9Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
                                 </property>
                                </widget>
                               </item>
@@ -6131,6 +6338,29 @@
                                 </property>
                                </widget>
                               </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack10LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack10Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack10Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </widget>
                            </item>
@@ -6227,6 +6457,29 @@
                                 </property>
                                </widget>
                               </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack11LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack11Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack11Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
+                                </property>
+                               </widget>
+                              </item>
                              </layout>
                             </widget>
                            </item>
@@ -6320,6 +6573,29 @@
                                   <horstretch>0</horstretch>
                                   <verstretch>0</verstretch>
                                  </sizepolicy>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="0">
+                               <widget class="QLabel" name="advOutTrack12LangLabel">
+                                <property name="text">
+                                 <string>Basic.Settings.Output.Adv.Audio.Language</string>
+                                </property>
+                                <property name="buddy">
+                                 <cstring>advOutTrack12Lang</cstring>
+                                </property>
+                               </widget>
+                              </item>
+                              <item row="2" column="1">
+                               <widget class="QComboBox" name="advOutTrack12Lang">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="editable">
+                                 <bool>true</bool>
                                 </property>
                                </widget>
                               </item>

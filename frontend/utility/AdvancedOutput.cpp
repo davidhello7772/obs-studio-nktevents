@@ -425,10 +425,16 @@ inline void AdvancedOutput::SetupFFmpeg()
 		cfg_name += to_string((int)i + 1);
 		cfg_name += "Name";
 
+		string cfg_lang = "Track";
+		cfg_lang += to_string((int)i + 1);
+		cfg_lang += "Lang";
+
 		const char *audioName = config_get_string(main->Config(), "AdvOut", cfg_name.c_str());
+		const char *audioLang = config_get_string(main->Config(), "AdvOut", cfg_lang.c_str());
 
 		OBSDataAutoRelease item = obs_data_create();
 		obs_data_set_string(item, "name", audioName);
+		obs_data_set_string(item, "lang", audioLang);
 		obs_data_array_push_back(audio_names, item);
 	}
 
@@ -482,12 +488,18 @@ inline void AdvancedOutput::UpdateAudioSettings()
 	bool is_multitrack_output = allowsMultiTrack();
 
 	OBSDataAutoRelease settings[MAX_AUDIO_MIXES];
+	const char *trackLangs[MAX_AUDIO_MIXES];
 
 	for (size_t i = 0; i < MAX_AUDIO_MIXES; i++) {
 		string cfg_name = "Track";
 		cfg_name += to_string((int)i + 1);
 		cfg_name += "Name";
 		const char *name = config_get_string(main->Config(), "AdvOut", cfg_name.c_str());
+
+		string cfg_lang = "Track";
+		cfg_lang += to_string((int)i + 1);
+		cfg_lang += "Lang";
+		trackLangs[i] = config_get_string(main->Config(), "AdvOut", cfg_lang.c_str());
 
 		string def_name = "Track";
 		def_name += to_string((int)i + 1);
@@ -499,6 +511,7 @@ inline void AdvancedOutput::UpdateAudioSettings()
 		int track = (int)(i + 1);
 		settings[i] = obs_data_create();
 		obs_data_set_int(settings[i], "bitrate", GetAudioBitrate(i, recAudioEncoder));
+		obs_data_set_string(settings[i], "lang", trackLangs[i]);
 
 		obs_encoder_update(recordTrack[i], settings[i]);
 
