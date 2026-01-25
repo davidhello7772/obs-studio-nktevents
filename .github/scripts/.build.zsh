@@ -193,7 +193,8 @@ build() {
       if (( analyze )) {
         run_xcodebuild ${analyze_args}
       } else {
-        if [[ ${GITHUB_EVENT_NAME} == push && ${GITHUB_REF_NAME} =~ [0-9]+.[0-9]+.[0-9]+(-(rc|beta).+)? ]] {
+        # Only run archive+export for version tags when codesign is enabled
+        if (( codesign )) && [[ ${GITHUB_EVENT_NAME} == push && ${GITHUB_REF_NAME} =~ [0-9]+.[0-9]+.[0-9]+(-(rc|beta).+)? ]] {
           run_xcodebuild ${archive_args}
           run_xcodebuild ${export_args}
         } else {
