@@ -149,6 +149,7 @@ package() {
       cp ${project_root}/cmake/macos/resources/background.tiff obs-studio/.background/
       cp ${project_root}/cmake/macos/resources/AppIcon.icns obs-studio/.VolumeIcon.icns
       ln -s /Applications obs-studio/Applications
+      cp ${project_root}/cmake/macos/resources/README-Unsigned.txt obs-studio/README.txt
 
       mkdir -p obs-studio/OBS.app
       ditto OBS.app obs-studio/OBS.app
