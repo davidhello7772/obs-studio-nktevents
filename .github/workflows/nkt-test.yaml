@@ -1,0 +1,22 @@
+name: NKT Test Build
+run-name: NKT Test Build 🧪
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'nkt-*'
+
+jobs:
+  test:
+    name: Test Workflow 🧪
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test
+        run: |
+          echo "Workflow is running!"
+          echo "Branch: ${{ github.ref_name }}"
+          echo "Repository: ${{ github.repository }}"
