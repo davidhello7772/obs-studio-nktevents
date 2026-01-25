@@ -1,5 +1,5 @@
-OBS Studio - NKT Events Build
-==============================
+OBS Studio - 12 Tracks Multilingual Build
+=========================================
 
 This build is not code-signed with an Apple Developer certificate.
 macOS Gatekeeper may block it from running initially.
@@ -24,4 +24,4 @@ Option 3: System Settings
   3. Scroll down and click "Open Anyway"
 
 For more information, visit:
-https://github.com/davidhello7772/obs-studio-nktevents
+https://github.com/davidhello7772/obs-studio-12tracks-multilingual
