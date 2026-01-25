@@ -556,6 +556,12 @@ OBSBasicSettings::OBSBasicSettings(QWidget *parent)
 	HookWidget(ui->advOutFFTrack4,       CHECK_CHANGED,  OUTPUTS_CHANGED);
 	HookWidget(ui->advOutFFTrack5,       CHECK_CHANGED,  OUTPUTS_CHANGED);
 	HookWidget(ui->advOutFFTrack6,       CHECK_CHANGED,  OUTPUTS_CHANGED);
+	HookWidget(ui->advOutFFTrack7,       CHECK_CHANGED,  OUTPUTS_CHANGED);
+	HookWidget(ui->advOutFFTrack8,       CHECK_CHANGED,  OUTPUTS_CHANGED);
+	HookWidget(ui->advOutFFTrack9,       CHECK_CHANGED,  OUTPUTS_CHANGED);
+	HookWidget(ui->advOutFFTrack10,      CHECK_CHANGED,  OUTPUTS_CHANGED);
+	HookWidget(ui->advOutFFTrack11,      CHECK_CHANGED,  OUTPUTS_CHANGED);
+	HookWidget(ui->advOutFFTrack12,      CHECK_CHANGED,  OUTPUTS_CHANGED);
 	HookWidget(ui->advOutFFAEncoder,     COMBO_CHANGED,  OUTPUTS_CHANGED);
 	HookWidget(ui->advOutFFACfg,         EDIT_CHANGED,   OUTPUTS_CHANGED);
 	HookWidget(ui->advOutTrack1Bitrate,  COMBO_CHANGED,  OUTPUTS_CHANGED);
@@ -993,6 +999,12 @@ OBSBasicSettings::OBSBasicSettings(QWidget *parent)
 	ui->advOutFFTrack4->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track4"));
 	ui->advOutFFTrack5->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track5"));
 	ui->advOutFFTrack6->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track6"));
+	ui->advOutFFTrack7->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track7"));
+	ui->advOutFFTrack8->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track8"));
+	ui->advOutFFTrack9->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track9"));
+	ui->advOutFFTrack10->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track10"));
+	ui->advOutFFTrack11->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track11"));
+	ui->advOutFFTrack12->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track12"));
 
 	ui->snappingEnabled->setAccessibleName(QTStr("Basic.Settings.General.Snapping"));
 	ui->systemTrayEnabled->setAccessibleName(QTStr("Basic.Settings.General.SysTray"));
@@ -2319,6 +2331,12 @@ void OBSBasicSettings::LoadAdvOutputFFmpegSettings()
 	ui->advOutFFTrack4->setChecked(audioMixes & (1 << 3));
 	ui->advOutFFTrack5->setChecked(audioMixes & (1 << 4));
 	ui->advOutFFTrack6->setChecked(audioMixes & (1 << 5));
+	ui->advOutFFTrack7->setChecked(audioMixes & (1 << 6));
+	ui->advOutFFTrack8->setChecked(audioMixes & (1 << 7));
+	ui->advOutFFTrack9->setChecked(audioMixes & (1 << 8));
+	ui->advOutFFTrack10->setChecked(audioMixes & (1 << 9));
+	ui->advOutFFTrack11->setChecked(audioMixes & (1 << 10));
+	ui->advOutFFTrack12->setChecked(audioMixes & (1 << 11));
 }
 
 void OBSBasicSettings::LoadAdvOutputAudioSettings()
@@ -2518,6 +2536,12 @@ void OBSBasicSettings::SetAdvOutputFFmpegEnablement(FFmpegCodecType encoderType,
 		ui->advOutFFTrack4->setEnabled(enabled);
 		ui->advOutFFTrack5->setEnabled(enabled);
 		ui->advOutFFTrack6->setEnabled(enabled);
+		ui->advOutFFTrack7->setEnabled(enabled);
+		ui->advOutFFTrack8->setEnabled(enabled);
+		ui->advOutFFTrack9->setEnabled(enabled);
+		ui->advOutFFTrack10->setEnabled(enabled);
+		ui->advOutFFTrack11->setEnabled(enabled);
+		ui->advOutFFTrack12->setEnabled(enabled);
 	default:
 		break;
 	}
@@ -3813,7 +3837,13 @@ void OBSBasicSettings::SaveOutputSettings()
 			       (ui->advOutFFTrack3->isChecked() ? (1 << 2) : 0) |
 			       (ui->advOutFFTrack4->isChecked() ? (1 << 3) : 0) |
 			       (ui->advOutFFTrack5->isChecked() ? (1 << 4) : 0) |
-			       (ui->advOutFFTrack6->isChecked() ? (1 << 5) : 0));
+			       (ui->advOutFFTrack6->isChecked() ? (1 << 5) : 0) |
+			       (ui->advOutFFTrack7->isChecked() ? (1 << 6) : 0) |
+			       (ui->advOutFFTrack8->isChecked() ? (1 << 7) : 0) |
+			       (ui->advOutFFTrack9->isChecked() ? (1 << 8) : 0) |
+			       (ui->advOutFFTrack10->isChecked() ? (1 << 9) : 0) |
+			       (ui->advOutFFTrack11->isChecked() ? (1 << 10) : 0) |
+			       (ui->advOutFFTrack12->isChecked() ? (1 << 11) : 0));
 	SaveCombo(ui->advOutTrack1Bitrate, "AdvOut", "Track1Bitrate");
 	SaveCombo(ui->advOutTrack2Bitrate, "AdvOut", "Track2Bitrate");
 	SaveCombo(ui->advOutTrack3Bitrate, "AdvOut", "Track3Bitrate");

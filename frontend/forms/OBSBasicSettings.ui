@@ -4860,6 +4860,48 @@
                                     </property>
                                    </widget>
                                   </item>
+                                  <item>
+                                   <widget class="QCheckBox" name="advOutFFTrack7">
+                                    <property name="text">
+                                     <string notr="true">7</string>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                  <item>
+                                   <widget class="QCheckBox" name="advOutFFTrack8">
+                                    <property name="text">
+                                     <string notr="true">8</string>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                  <item>
+                                   <widget class="QCheckBox" name="advOutFFTrack9">
+                                    <property name="text">
+                                     <string notr="true">9</string>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                  <item>
+                                   <widget class="QCheckBox" name="advOutFFTrack10">
+                                    <property name="text">
+                                     <string notr="true">10</string>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                  <item>
+                                   <widget class="QCheckBox" name="advOutFFTrack11">
+                                    <property name="text">
+                                     <string notr="true">11</string>
+                                    </property>
+                                   </widget>
+                                  </item>
+                                  <item>
+                                   <widget class="QCheckBox" name="advOutFFTrack12">
+                                    <property name="text">
+                                     <string notr="true">12</string>
+                                    </property>
+                                   </widget>
+                                  </item>
                                  </layout>
                                 </widget>
                                </item>
