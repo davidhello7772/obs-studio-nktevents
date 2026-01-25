@@ -48,6 +48,12 @@ OBSAdvAudioCtrl::OBSAdvAudioCtrl(QGridLayout *, obs_source_t *source_) : source(
 	mixer4 = new QCheckBox();
 	mixer5 = new QCheckBox();
 	mixer6 = new QCheckBox();
+	mixer7 = new QCheckBox();
+	mixer8 = new QCheckBox();
+	mixer9 = new QCheckBox();
+	mixer10 = new QCheckBox();
+	mixer11 = new QCheckBox();
+	mixer12 = new QCheckBox();
 
 	sigs.emplace_back(handler, "activate", OBSSourceActivated, this);
 	sigs.emplace_back(handler, "deactivate", OBSSourceDeactivated, this);
@@ -179,6 +185,24 @@ OBSAdvAudioCtrl::OBSAdvAudioCtrl(QGridLayout *, obs_source_t *source_) : source(
 	mixer6->setText("6");
 	mixer6->setChecked(mixers & (1 << 5));
 	mixer6->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track6"));
+	mixer7->setText("7");
+	mixer7->setChecked(mixers & (1 << 6));
+	mixer7->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track7"));
+	mixer8->setText("8");
+	mixer8->setChecked(mixers & (1 << 7));
+	mixer8->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track8"));
+	mixer9->setText("9");
+	mixer9->setChecked(mixers & (1 << 8));
+	mixer9->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track9"));
+	mixer10->setText("10");
+	mixer10->setChecked(mixers & (1 << 9));
+	mixer10->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track10"));
+	mixer11->setText("11");
+	mixer11->setChecked(mixers & (1 << 10));
+	mixer11->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track11"));
+	mixer12->setText("12");
+	mixer12->setChecked(mixers & (1 << 11));
+	mixer12->setAccessibleName(QTStr("Basic.Settings.Output.Adv.Audio.Track12"));
 
 	balanceContainer->layout()->addWidget(labelL);
 	balanceContainer->layout()->addWidget(balance);
@@ -195,6 +219,12 @@ OBSAdvAudioCtrl::OBSAdvAudioCtrl(QGridLayout *, obs_source_t *source_) : source(
 	mixerContainer->layout()->addWidget(mixer4);
 	mixerContainer->layout()->addWidget(mixer5);
 	mixerContainer->layout()->addWidget(mixer6);
+	mixerContainer->layout()->addWidget(mixer7);
+	mixerContainer->layout()->addWidget(mixer8);
+	mixerContainer->layout()->addWidget(mixer9);
+	mixerContainer->layout()->addWidget(mixer10);
+	mixerContainer->layout()->addWidget(mixer11);
+	mixerContainer->layout()->addWidget(mixer12);
 	mixerContainer->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Fixed);
 
 	connect(volume, &QDoubleSpinBox::valueChanged, this, &OBSAdvAudioCtrl::volumeChanged);
@@ -215,6 +245,12 @@ OBSAdvAudioCtrl::OBSAdvAudioCtrl(QGridLayout *, obs_source_t *source_) : source(
 	connectMixer(mixer4, 3);
 	connectMixer(mixer5, 4);
 	connectMixer(mixer6, 5);
+	connectMixer(mixer7, 6);
+	connectMixer(mixer8, 7);
+	connectMixer(mixer9, 8);
+	connectMixer(mixer10, 9);
+	connectMixer(mixer11, 10);
+	connectMixer(mixer12, 11);
 
 	setObjectName(sourceName);
 }
@@ -377,6 +413,12 @@ void OBSAdvAudioCtrl::SourceMixersChanged(uint32_t mixers)
 	setCheckboxState(mixer4, mixers & (1 << 3));
 	setCheckboxState(mixer5, mixers & (1 << 4));
 	setCheckboxState(mixer6, mixers & (1 << 5));
+	setCheckboxState(mixer7, mixers & (1 << 6));
+	setCheckboxState(mixer8, mixers & (1 << 7));
+	setCheckboxState(mixer9, mixers & (1 << 8));
+	setCheckboxState(mixer10, mixers & (1 << 9));
+	setCheckboxState(mixer11, mixers & (1 << 10));
+	setCheckboxState(mixer12, mixers & (1 << 11));
 }
 
 /* ------------------------------------------------------------------------- */

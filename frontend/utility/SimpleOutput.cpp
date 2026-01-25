@@ -156,7 +156,7 @@ void SimpleOutput::LoadRecordingPreset()
 			throw "Failed to create audio recording encoder "
 			      "(simple output)";
 		for (int i = 0; i < MAX_AUDIO_MIXES; i++) {
-			char name[23];
+			char name[32];
 			if (strcmp(audio_encoder, "opus") == 0) {
 				snprintf(name, sizeof name, "simple_opus_recording%d", i);
 				success = CreateSimpleOpusEncoder(audioTrack[i], GetAudioBitrate(), name, i);
