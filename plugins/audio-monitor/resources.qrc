@@ -14,5 +14,14 @@
         <!-- Monitor button icons -->
         <file>images/monitor-off.svg</file>
         <file>images/monitor-and-output.svg</file>
+        <!-- Header icon -->
+        <file>images/header-speaker.svg</file>
+        <!-- Preset button icons -->
+        <file>images/preset-teaching.svg</file>
+        <file>images/preset-meditation.svg</file>
+        <file>images/preset-no-filter.svg</file>
+        <!-- Filter level +/- icons -->
+        <file>images/minus.svg</file>
+        <file>images/plus.svg</file>
     </qresource>
 </RCC>

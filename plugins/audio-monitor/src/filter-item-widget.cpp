@@ -5,6 +5,8 @@
 
 #include "filter-item-widget.hpp"
 
+#include <obs-module.h>
+
 #include <QHBoxLayout>
 #include <QFontMetrics>
 #include <obs-frontend-api.h>
@@ -23,7 +25,7 @@ FilterItemWidget::FilterItemWidget(obs_source_t *filter_, QWidget *parent)
 	visCheckbox = new QCheckBox(this);
 	visCheckbox->setFixedSize(16, 16);
 	visCheckbox->setChecked(obs_source_enabled(filter));
-	visCheckbox->setToolTip(tr("Toggle filter"));
+	visCheckbox->setToolTip(obs_module_text("AudioMonitor.Filter.Toggle"));
 	visCheckbox->setStyleSheet(R"(
 		QCheckBox::indicator {
 			width: 14px;
