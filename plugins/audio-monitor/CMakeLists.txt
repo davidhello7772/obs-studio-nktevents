@@ -24,6 +24,7 @@ target_sources(
           src/audio-monitor-window.hpp
           src/audio-source-widget.cpp
           src/audio-source-widget.hpp
+          src/constants.h
           src/filter-item-widget.cpp
           src/filter-item-widget.hpp
           src/filter-list-widget.cpp

@@ -6,6 +6,8 @@
 #include "filter-list-widget.hpp"
 #include "filter-item-widget.hpp"
 
+#include <obs-module.h>
+
 #include <obs-frontend-api.h>
 
 FilterListWidget::FilterListWidget(obs_source_t *source_, QWidget *parent)
@@ -87,7 +89,7 @@ void FilterListWidget::RefreshFilters()
 	// Show overflow indicator if needed
 	if (data.count > MAX_VISIBLE_FILTERS) {
 		int extra = data.count - MAX_VISIBLE_FILTERS;
-		overflowLabel->setText(QString("+%1 more").arg(extra));
+		overflowLabel->setText(QString(obs_module_text("AudioMonitor.Filter.MoreCount")).arg(extra));
 		overflowLabel->show();
 		layout->addWidget(overflowLabel);
 	}
