@@ -155,6 +155,15 @@ public:
 	 */
 	void SetCardWidth(int width);
 
+	/**
+	 * @brief Apply meter thresholds based on source type.
+	 *
+	 * Reads threshold values from parent AudioMonitorWindow and applies them
+	 * to the volume meter. Mix sources get an offset applied to the thresholds.
+	 * Called when thresholds change or source type changes.
+	 */
+	void ApplyMeterThresholds();
+
 signals:
 	void colorChanged(const QColor &newColor);
 	void sourceTypeChanged(AudioSourceWidget *widget, SourceType newType);
@@ -228,7 +237,6 @@ private:
 	void UpdateTypeButtonsStyle();
 	void UpdateTypeBadge();
 	void CreateTypeControls(QVBoxLayout *parentLayout);
-	void ApplyMeterThresholds();
 	void UpdateWarningDisplay();
 	void UpdateMonitorButtonStyle();
 	void UpdateMonitorButtonFromOBS(int type);

@@ -59,6 +59,19 @@ constexpr double NORMAL_NOMINAL_LEVEL_DB = -60.0;  // Same as minimum = no blue 
 constexpr double NORMAL_WARNING_LEVEL_DB = -6.0;
 constexpr double NORMAL_ERROR_LEVEL_DB = -3.0;
 
+// Configurable threshold ranges (for header controls)
+constexpr double NOMINAL_THRESHOLD_MIN = -30.0;
+constexpr double NOMINAL_THRESHOLD_MAX = -3.0;
+constexpr double WARNING_THRESHOLD_MIN = -20.0;
+constexpr double WARNING_THRESHOLD_MAX = -1.0;
+constexpr double ERROR_THRESHOLD_MIN = -10.0;
+constexpr double ERROR_THRESHOLD_MAX = 0.0;
+constexpr double THRESHOLD_STEP = 1.0;
+
+// Minimum gaps between thresholds to prevent overlap
+constexpr double NOMINAL_WARNING_GAP = 3.0;  // nominal must be at least 3dB below warning
+constexpr double WARNING_ERROR_GAP = 2.0;    // warning must be at least 2dB below error
+
 // ============================================================================
 // Volume Monitoring Configuration
 // ============================================================================
@@ -104,6 +117,14 @@ const inline QColor COLOR_WARNING_LOW(255, 0, 0);      // Red
 const inline QString COLOR_FILTER_OFF = "#B8B8B8";     // Muted gray
 const inline QString COLOR_FILTER_LOW = "#37D247";     // Green (success)
 const inline QString COLOR_FILTER_HIGH = "#E5AF24";    // Orange (warning)
+
+// ============================================================================
+// Colors - Threshold Controls (meter zones)
+// ============================================================================
+
+const inline QColor COLOR_THRESHOLD_NOMINAL(0x4C, 0xFF, 0x4C);   // Bright green
+const inline QColor COLOR_THRESHOLD_WARNING(0xFF, 0xCC, 0x00);   // Orange/yellow
+const inline QColor COLOR_THRESHOLD_ERROR(0xFF, 0x4C, 0x4C);     // Bright red
 
 // ============================================================================
 // Colors - UI Elements

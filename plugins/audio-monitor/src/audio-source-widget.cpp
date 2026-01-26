@@ -4,6 +4,7 @@
  */
 
 #include "audio-source-widget.hpp"
+#include "audio-monitor-window.hpp"
 #include "filter-list-widget.hpp"
 #include "volume-meter.hpp"
 
@@ -571,41 +572,46 @@ void AudioSourceWidget::OnBlinkTimer()
 
 void AudioSourceWidget::ApplyMeterThresholds()
 {
-	// KFS uses a scale with ceiling at +12dB, OBS uses dBFS with ceiling at 0dB
-	// Apply -12dB offset to convert KFS values to OBS dBFS
-	// Blue zone only shown for Mix and Translated sources
+	// Get configurable thresholds from parent AudioMonitorWindow
+	// Navigate the widget hierarchy: this -> containerWidget -> scrollArea viewport -> AudioMonitorWindow
+	AudioMonitorWindow *window = nullptr;
+	QWidget *p = parentWidget();
+	while (p) {
+		window = qobject_cast<AudioMonitorWindow *>(p);
+		if (window)
+			break;
+		p = p->parentWidget();
+	}
 
+	// Get threshold values (use defaults if window not found)
+	double nominal = window ? window->getNominalThreshold() : AudioMonitorWindow::DEFAULT_NOMINAL_THRESHOLD;
+	double warning = window ? window->getWarningThreshold() : AudioMonitorWindow::DEFAULT_WARNING_THRESHOLD;
+	double error = window ? window->getErrorThreshold() : AudioMonitorWindow::DEFAULT_ERROR_THRESHOLD;
+	double mixOffset = window ? window->getMixOffset() : AudioMonitorWindow::DEFAULT_MIX_OFFSET;
+
+	// Blue zone only shown for Mix and Translated sources
 	switch (sourceType) {
 	case SourceType::Mix:
-		// Mix reference has lower levels (like KFS "English for mix")
-		// Blue zone: below -28dB (too quiet)
-		// Green zone: -28dB to -20dB (nominal)
-		// Yellow zone: -20dB to -3dB (warning)
-		// Red zone: above -3dB (error/clipping)
-		volMeter->setNominalLevel(-28.0);
-		volMeter->setWarningLevel(-20.0);
-		volMeter->setErrorLevel(-3.0);
+		// Mix reference uses thresholds shifted by mixOffset
+		// This creates a quieter "target zone" for mix channels
+		volMeter->setNominalLevel(nominal + mixOffset);
+		volMeter->setWarningLevel(warning + mixOffset);
+		volMeter->setErrorLevel(error + mixOffset);
 		break;
 	case SourceType::Translated:
-		// Translated channels - show blue zone with standard thresholds
-		// Blue zone: below -9dB (too quiet)
-		// Green zone: -9dB to -6dB (nominal)
-		// Yellow zone: -6dB to -3dB (warning)
-		// Red zone: above -3dB (error/clipping)
-		volMeter->setNominalLevel(-9.0);
-		volMeter->setWarningLevel(-6.0);
-		volMeter->setErrorLevel(-3.0);
+		// Translated channels - show blue zone with configurable thresholds
+		volMeter->setNominalLevel(nominal);
+		volMeter->setWarningLevel(warning);
+		volMeter->setErrorLevel(error);
 		break;
 	case SourceType::Normal:
 	case SourceType::Reference:
 	default:
 		// Normal and Reference sources - NO blue zone (nominalLevel = minimumLevel)
-		// Green zone: from minimum to -6dB
-		// Yellow zone: -6dB to -3dB (warning)
-		// Red zone: above -3dB (error/clipping)
+		// Green zone starts at minimum, uses configurable warning/error thresholds
 		volMeter->setNominalLevel(-60.0);  // Same as minimumLevel = no blue zone
-		volMeter->setWarningLevel(-6.0);
-		volMeter->setErrorLevel(-3.0);
+		volMeter->setWarningLevel(warning);
+		volMeter->setErrorLevel(error);
 		break;
 	}
 }

@@ -91,10 +91,41 @@ public:
 	 */
 	void ApplyPreset(PresetType preset);
 
+	/**
+	 * @brief Get the current threshold values for meter display.
+	 * Mix sources should add getMixOffset() to these values.
+	 */
+	double getNominalThreshold() const { return nominalThreshold; }
+	double getWarningThreshold() const { return warningThreshold; }
+	double getErrorThreshold() const { return errorThreshold; }
+	double getMixOffset() const { return mixOffset; }
+
+	/** @brief Default values */
+	static constexpr double DEFAULT_NOMINAL_THRESHOLD = -9.0;
+	static constexpr double DEFAULT_WARNING_THRESHOLD = -6.0;
+	static constexpr double DEFAULT_ERROR_THRESHOLD = -3.0;
+	static constexpr double DEFAULT_MIX_OFFSET = -25.0;
+	static constexpr double MIX_OFFSET_MIN = -40.0;
+	static constexpr double MIX_OFFSET_MAX = -10.0;
+
 private slots:
 	void OnCardWidthDecrease();
 	void OnCardWidthIncrease();
 	void OnCardWidthReset();
+
+	// Threshold control slots
+	void OnNominalDecrease();
+	void OnNominalIncrease();
+	void OnNominalReset();
+	void OnWarningDecrease();
+	void OnWarningIncrease();
+	void OnWarningReset();
+	void OnErrorDecrease();
+	void OnErrorIncrease();
+	void OnErrorReset();
+	void OnMixOffsetDecrease();
+	void OnMixOffsetIncrease();
+	void OnMixOffsetReset();
 
 private:
 	// UI elements
@@ -111,6 +142,29 @@ private:
 	QPushButton *widthIncreaseBtn;
 	QPushButton *widthValueBtn;  // Clickable label showing width (click to reset)
 	int currentCardWidth;  // Current card width in pixels
+
+	// Threshold controls (Levels: green, orange, red)
+	QPushButton *nominalMinusBtn;
+	QPushButton *nominalValueBtn;
+	QPushButton *nominalPlusBtn;
+	QPushButton *warningMinusBtn;
+	QPushButton *warningValueBtn;
+	QPushButton *warningPlusBtn;
+	QPushButton *errorMinusBtn;
+	QPushButton *errorValueBtn;
+	QPushButton *errorPlusBtn;
+
+	// Mix offset controls
+	QPushButton *mixOffsetMinusBtn;
+	QPushButton *mixOffsetValueBtn;
+	QPushButton *mixOffsetPlusBtn;
+
+	// Current threshold values (dBFS) - applies to Translated sources
+	// Mix sources use these values + mixOffset
+	double nominalThreshold = DEFAULT_NOMINAL_THRESHOLD;
+	double warningThreshold = DEFAULT_WARNING_THRESHOLD;
+	double errorThreshold = DEFAULT_ERROR_THRESHOLD;
+	double mixOffset = DEFAULT_MIX_OFFSET;
 
 	// Source tracking: source UUID -> widget
 	QMap<QString, AudioSourceWidget *> sourceWidgets;
@@ -134,9 +188,13 @@ private:
 
 	// Internal methods
 	void CreateHeader();
+	void CreateThresholdControls(QHBoxLayout *layout);
 	void UpdatePresetButtonStates();
 	void UpdateWidthControls();
+	void UpdateThresholdControls();
+	void UpdateMixOffsetControls();
 	void ApplyCardWidthToAll();
+	void ApplyThresholdsToAll();
 	void ConnectSignals();
 	void DisconnectSignals();
 	void AddSource(obs_source_t *source);
