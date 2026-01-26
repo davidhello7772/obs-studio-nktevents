@@ -345,6 +345,14 @@ void AudioMonitorWindow::SaveLoadColorSettings(obs_data_t *save_data, bool savin
 			obs_data_set_int(levelData, uuid.toUtf8().constData(), level);
 		}
 		obs_data_set_obj(save_data, "audio_monitor_filter_levels", levelData);
+
+		// Save threshold values
+		obs_data_set_double(save_data, "audio_monitor_nominal_threshold", nominalThreshold);
+		obs_data_set_double(save_data, "audio_monitor_warning_threshold", warningThreshold);
+		obs_data_set_double(save_data, "audio_monitor_error_threshold", errorThreshold);
+
+		// Save Mix offset
+		obs_data_set_double(save_data, "audio_monitor_mix_offset", mixOffset);
 	} else {
 		// Load card width
 		int loadedWidth = (int)obs_data_get_int(save_data, "audio_monitor_card_width");
@@ -408,7 +416,48 @@ void AudioMonitorWindow::SaveLoadColorSettings(obs_data_t *save_data, bool savin
 			}
 		}
 
-		// Refresh widgets with loaded colors, types, and filter levels
+		// Load threshold values
+		double loadedNominal = obs_data_get_double(save_data, "audio_monitor_nominal_threshold");
+		double loadedWarning = obs_data_get_double(save_data, "audio_monitor_warning_threshold");
+		double loadedError = obs_data_get_double(save_data, "audio_monitor_error_threshold");
+
+		// Validate and apply loaded thresholds (use defaults if not set or invalid)
+		if (loadedNominal >= NOMINAL_THRESHOLD_MIN && loadedNominal <= NOMINAL_THRESHOLD_MAX) {
+			nominalThreshold = loadedNominal;
+		} else {
+			nominalThreshold = DEFAULT_NOMINAL_THRESHOLD;
+		}
+		if (loadedWarning >= WARNING_THRESHOLD_MIN && loadedWarning <= WARNING_THRESHOLD_MAX) {
+			warningThreshold = loadedWarning;
+		} else {
+			warningThreshold = DEFAULT_WARNING_THRESHOLD;
+		}
+		if (loadedError >= ERROR_THRESHOLD_MIN && loadedError <= ERROR_THRESHOLD_MAX) {
+			errorThreshold = loadedError;
+		} else {
+			errorThreshold = DEFAULT_ERROR_THRESHOLD;
+		}
+
+		// Ensure proper ordering with gaps
+		if (nominalThreshold > warningThreshold - NOMINAL_WARNING_GAP) {
+			nominalThreshold = warningThreshold - NOMINAL_WARNING_GAP;
+		}
+		if (warningThreshold > errorThreshold - WARNING_ERROR_GAP) {
+			warningThreshold = errorThreshold - WARNING_ERROR_GAP;
+		}
+
+		// Load Mix offset
+		double loadedMixOffset = obs_data_get_double(save_data, "audio_monitor_mix_offset");
+		if (loadedMixOffset >= MIX_OFFSET_MIN && loadedMixOffset <= MIX_OFFSET_MAX) {
+			mixOffset = loadedMixOffset;
+		} else {
+			mixOffset = DEFAULT_MIX_OFFSET;
+		}
+
+		UpdateThresholdControls();
+		UpdateMixOffsetControls();
+
+		// Refresh widgets with loaded colors, types, filter levels, and thresholds
 		RefreshSources();
 	}
 }
@@ -469,16 +518,17 @@ void AudioMonitorWindow::CreateHeader()
 	connect(widthDecreaseBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnCardWidthDecrease);
 	headerLayout->addWidget(widthDecreaseBtn);
 
-	// Width value button (shows width, click to reset to default)
-	widthValueBtn = new QPushButton(QString::number(currentCardWidth));
-	widthValueBtn->setFixedSize(36, 24);
+	// Width value button (shows width in px, click to reset to default)
+	widthValueBtn = new QPushButton(QString("%1px").arg(currentCardWidth));
+	widthValueBtn->setFixedSize(44, 24);
 	widthValueBtn->setStyleSheet(
 		"QPushButton { "
-		"  color: #FFFFFF; font-size: 11px; font-weight: 500; "
-		"  background: transparent; border: 1px solid transparent; "
+		"  color: #FFFFFF; font-size: 11px; font-weight: 600; "
+		"  background-color: #2A2D35; border: 1px solid #3C404D; "
 		"  border-radius: 3px; "
+		"  padding: 2px 4px; "
 		"} "
-		"QPushButton:hover { background-color: rgba(255,255,255,0.1); border-color: #3C404D; }");
+		"QPushButton:hover { background-color: #3A3D45; border-color: #4C505D; }");
 	widthValueBtn->setToolTip(obs_module_text("AudioMonitor.CardWidth.Reset.Tooltip"));
 	connect(widthValueBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnCardWidthReset);
 	headerLayout->addWidget(widthValueBtn);
@@ -493,6 +543,12 @@ void AudioMonitorWindow::CreateHeader()
 
 	// Initial width control states
 	UpdateWidthControls();
+
+	// Separator before threshold controls
+	headerLayout->addSpacing(15);
+
+	// Threshold controls (Levels: green, orange, red)
+	CreateThresholdControls(headerLayout);
 
 	headerLayout->addStretch();
 
@@ -702,8 +758,8 @@ void AudioMonitorWindow::UpdateWidthControls()
 	if (!widthDecreaseBtn || !widthIncreaseBtn || !widthValueBtn)
 		return;
 
-	// Update value button text
-	widthValueBtn->setText(QString::number(currentCardWidth));
+	// Update value button text (with px suffix)
+	widthValueBtn->setText(QString("%1px").arg(currentCardWidth));
 
 	// Update button enabled states
 	widthDecreaseBtn->setEnabled(currentCardWidth > CARD_WIDTH_MIN);
@@ -715,4 +771,368 @@ void AudioMonitorWindow::ApplyCardWidthToAll()
 	for (auto *widget : sourceWidgets.values()) {
 		widget->SetCardWidth(currentCardWidth);
 	}
+}
+
+// ============================================================================
+// Threshold Controls
+// ============================================================================
+
+void AudioMonitorWindow::CreateThresholdControls(QHBoxLayout *headerLayout)
+{
+	// "Levels" label
+	QLabel *levelsLabel = new QLabel(obs_module_text("AudioMonitor.Levels.Label"));
+	levelsLabel->setStyleSheet("color: #999999; font-size: 11px; background: transparent; border: none;");
+	headerLayout->addWidget(levelsLabel);
+
+	// Shared button styles
+	const QString stepperBtnStyle =
+		"QPushButton { "
+		"  background-color: #353942; "
+		"  color: #FFFFFF; "
+		"  border: 1px solid #3C404D; "
+		"  border-radius: 3px; "
+		"  font-size: 11px; "
+		"  font-weight: bold; "
+		"  padding: 2px 4px; "
+		"} "
+		"QPushButton:hover { background-color: #454952; } "
+		"QPushButton:pressed { background-color: #252932; } "
+		"QPushButton:disabled { color: #666666; background-color: #2A2D35; }";
+
+	const QString valueBtnStyle =
+		"QPushButton { "
+		"  color: #FFFFFF; font-size: 11px; font-weight: 600; "
+		"  background-color: #2A2D35; border: 1px solid #3C404D; "
+		"  border-radius: 3px; "
+		"  padding: 2px 4px; "
+		"} "
+		"QPushButton:hover { background-color: #3A3D45; border-color: #4C505D; }";
+
+	// Helper lambda to create a color dot label
+	auto createColorDot = [](const QColor &color) -> QLabel * {
+		QLabel *dot = new QLabel();
+		dot->setFixedSize(8, 8);
+		dot->setStyleSheet(QString(
+			"background-color: %1; "
+			"border-radius: 4px; "
+			"border: none;"
+		).arg(color.name()));
+		return dot;
+	};
+
+	// Helper lambda to create a subtle vertical separator
+	auto createSeparator = []() -> QFrame * {
+		QFrame *sep = new QFrame();
+		sep->setFrameShape(QFrame::VLine);
+		sep->setFixedSize(1, 16);
+		sep->setStyleSheet("background-color: #3C404D; border: none;");
+		return sep;
+	};
+
+	// === Nominal (Green) threshold ===
+	QLabel *nominalDot = createColorDot(COLOR_THRESHOLD_NOMINAL);
+	headerLayout->addWidget(nominalDot);
+
+	nominalMinusBtn = new QPushButton("-");
+	nominalMinusBtn->setFixedSize(20, 20);
+	nominalMinusBtn->setStyleSheet(stepperBtnStyle);
+	nominalMinusBtn->setToolTip(obs_module_text("AudioMonitor.Levels.Nominal.Decrease.Tooltip"));
+	connect(nominalMinusBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnNominalDecrease);
+	headerLayout->addWidget(nominalMinusBtn);
+
+	nominalValueBtn = new QPushButton(QString::number((int)nominalThreshold));
+	nominalValueBtn->setFixedSize(32, 20);
+	nominalValueBtn->setStyleSheet(valueBtnStyle);
+	nominalValueBtn->setToolTip(QString(obs_module_text("AudioMonitor.Levels.Nominal.Value.Tooltip")).arg((int)DEFAULT_NOMINAL_THRESHOLD));
+	connect(nominalValueBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnNominalReset);
+	headerLayout->addWidget(nominalValueBtn);
+
+	nominalPlusBtn = new QPushButton("+");
+	nominalPlusBtn->setFixedSize(20, 20);
+	nominalPlusBtn->setStyleSheet(stepperBtnStyle);
+	nominalPlusBtn->setToolTip(obs_module_text("AudioMonitor.Levels.Nominal.Increase.Tooltip"));
+	connect(nominalPlusBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnNominalIncrease);
+	headerLayout->addWidget(nominalPlusBtn);
+
+	headerLayout->addSpacing(4);
+	headerLayout->addWidget(createSeparator());
+	headerLayout->addSpacing(4);
+
+	// === Warning (Orange) threshold ===
+	QLabel *warningDot = createColorDot(COLOR_THRESHOLD_WARNING);
+	headerLayout->addWidget(warningDot);
+
+	warningMinusBtn = new QPushButton("-");
+	warningMinusBtn->setFixedSize(20, 20);
+	warningMinusBtn->setStyleSheet(stepperBtnStyle);
+	warningMinusBtn->setToolTip(obs_module_text("AudioMonitor.Levels.Warning.Decrease.Tooltip"));
+	connect(warningMinusBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnWarningDecrease);
+	headerLayout->addWidget(warningMinusBtn);
+
+	warningValueBtn = new QPushButton(QString::number((int)warningThreshold));
+	warningValueBtn->setFixedSize(32, 20);
+	warningValueBtn->setStyleSheet(valueBtnStyle);
+	warningValueBtn->setToolTip(QString(obs_module_text("AudioMonitor.Levels.Warning.Value.Tooltip")).arg((int)DEFAULT_WARNING_THRESHOLD));
+	connect(warningValueBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnWarningReset);
+	headerLayout->addWidget(warningValueBtn);
+
+	warningPlusBtn = new QPushButton("+");
+	warningPlusBtn->setFixedSize(20, 20);
+	warningPlusBtn->setStyleSheet(stepperBtnStyle);
+	warningPlusBtn->setToolTip(obs_module_text("AudioMonitor.Levels.Warning.Increase.Tooltip"));
+	connect(warningPlusBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnWarningIncrease);
+	headerLayout->addWidget(warningPlusBtn);
+
+	headerLayout->addSpacing(4);
+	headerLayout->addWidget(createSeparator());
+	headerLayout->addSpacing(4);
+
+	// === Error (Red) threshold ===
+	QLabel *errorDot = createColorDot(COLOR_THRESHOLD_ERROR);
+	headerLayout->addWidget(errorDot);
+
+	errorMinusBtn = new QPushButton("-");
+	errorMinusBtn->setFixedSize(20, 20);
+	errorMinusBtn->setStyleSheet(stepperBtnStyle);
+	errorMinusBtn->setToolTip(obs_module_text("AudioMonitor.Levels.Error.Decrease.Tooltip"));
+	connect(errorMinusBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnErrorDecrease);
+	headerLayout->addWidget(errorMinusBtn);
+
+	errorValueBtn = new QPushButton(QString::number((int)errorThreshold));
+	errorValueBtn->setFixedSize(32, 20);
+	errorValueBtn->setStyleSheet(valueBtnStyle);
+	errorValueBtn->setToolTip(QString(obs_module_text("AudioMonitor.Levels.Error.Value.Tooltip")).arg((int)DEFAULT_ERROR_THRESHOLD));
+	connect(errorValueBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnErrorReset);
+	headerLayout->addWidget(errorValueBtn);
+
+	errorPlusBtn = new QPushButton("+");
+	errorPlusBtn->setFixedSize(20, 20);
+	errorPlusBtn->setStyleSheet(stepperBtnStyle);
+	errorPlusBtn->setToolTip(obs_module_text("AudioMonitor.Levels.Error.Increase.Tooltip"));
+	connect(errorPlusBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnErrorIncrease);
+	headerLayout->addWidget(errorPlusBtn);
+
+	// "dB" unit label for thresholds
+	QLabel *dbLabel = new QLabel("dB");
+	dbLabel->setStyleSheet("color: #999999; font-size: 10px; background: transparent; border: none;");
+	headerLayout->addWidget(dbLabel);
+
+	// Separator before Mix offset
+	headerLayout->addSpacing(8);
+	headerLayout->addWidget(createSeparator());
+	headerLayout->addSpacing(8);
+
+	// === Mix Offset controls ===
+	QLabel *mixLabel = new QLabel(obs_module_text("AudioMonitor.MixOffset.Label"));
+	mixLabel->setStyleSheet("color: #999999; font-size: 11px; background: transparent; border: none;");
+	headerLayout->addWidget(mixLabel);
+
+	mixOffsetMinusBtn = new QPushButton("-");
+	mixOffsetMinusBtn->setFixedSize(20, 20);
+	mixOffsetMinusBtn->setStyleSheet(stepperBtnStyle);
+	mixOffsetMinusBtn->setToolTip(obs_module_text("AudioMonitor.MixOffset.Decrease.Tooltip"));
+	connect(mixOffsetMinusBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnMixOffsetDecrease);
+	headerLayout->addWidget(mixOffsetMinusBtn);
+
+	mixOffsetValueBtn = new QPushButton(QString::number((int)mixOffset));
+	mixOffsetValueBtn->setFixedSize(36, 20);
+	mixOffsetValueBtn->setStyleSheet(valueBtnStyle);
+	mixOffsetValueBtn->setToolTip(QString(obs_module_text("AudioMonitor.MixOffset.Value.Tooltip")).arg((int)DEFAULT_MIX_OFFSET));
+	connect(mixOffsetValueBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnMixOffsetReset);
+	headerLayout->addWidget(mixOffsetValueBtn);
+
+	mixOffsetPlusBtn = new QPushButton("+");
+	mixOffsetPlusBtn->setFixedSize(20, 20);
+	mixOffsetPlusBtn->setStyleSheet(stepperBtnStyle);
+	mixOffsetPlusBtn->setToolTip(obs_module_text("AudioMonitor.MixOffset.Increase.Tooltip"));
+	connect(mixOffsetPlusBtn, &QPushButton::clicked, this, &AudioMonitorWindow::OnMixOffsetIncrease);
+	headerLayout->addWidget(mixOffsetPlusBtn);
+
+	// "dB" unit label for mix offset
+	QLabel *mixDbLabel = new QLabel("dB");
+	mixDbLabel->setStyleSheet("color: #999999; font-size: 10px; background: transparent; border: none;");
+	headerLayout->addWidget(mixDbLabel);
+
+	// Initial threshold and mix offset control states
+	UpdateThresholdControls();
+	UpdateMixOffsetControls();
+}
+
+void AudioMonitorWindow::UpdateThresholdControls()
+{
+	if (!nominalValueBtn || !warningValueBtn || !errorValueBtn)
+		return;
+
+	// Update value button texts
+	nominalValueBtn->setText(QString::number((int)nominalThreshold));
+	warningValueBtn->setText(QString::number((int)warningThreshold));
+	errorValueBtn->setText(QString::number((int)errorThreshold));
+
+	// Update button enabled states based on constraints
+	// Nominal: can decrease if > min, can increase if < warning - gap
+	double nominalMax = warningThreshold - NOMINAL_WARNING_GAP;
+	nominalMinusBtn->setEnabled(nominalThreshold > NOMINAL_THRESHOLD_MIN);
+	nominalPlusBtn->setEnabled(nominalThreshold < nominalMax);
+
+	// Warning: can decrease if > nominal + gap, can increase if < error - gap
+	double warningMin = nominalThreshold + NOMINAL_WARNING_GAP;
+	double warningMax = errorThreshold - WARNING_ERROR_GAP;
+	warningMinusBtn->setEnabled(warningThreshold > warningMin);
+	warningPlusBtn->setEnabled(warningThreshold < warningMax);
+
+	// Error: can decrease if > warning + gap, can increase if < max
+	double errorMin = warningThreshold + WARNING_ERROR_GAP;
+	errorMinusBtn->setEnabled(errorThreshold > errorMin);
+	errorPlusBtn->setEnabled(errorThreshold < ERROR_THRESHOLD_MAX);
+}
+
+void AudioMonitorWindow::ApplyThresholdsToAll()
+{
+	for (auto *widget : sourceWidgets.values()) {
+		widget->ApplyMeterThresholds();
+	}
+}
+
+// Nominal threshold handlers
+void AudioMonitorWindow::OnNominalDecrease()
+{
+	if (nominalThreshold > NOMINAL_THRESHOLD_MIN) {
+		nominalThreshold -= THRESHOLD_STEP;
+		if (nominalThreshold < NOMINAL_THRESHOLD_MIN)
+			nominalThreshold = NOMINAL_THRESHOLD_MIN;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnNominalIncrease()
+{
+	double maxAllowed = warningThreshold - NOMINAL_WARNING_GAP;
+	if (nominalThreshold < maxAllowed) {
+		nominalThreshold += THRESHOLD_STEP;
+		if (nominalThreshold > maxAllowed)
+			nominalThreshold = maxAllowed;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnNominalReset()
+{
+	if (nominalThreshold != DEFAULT_NOMINAL_THRESHOLD) {
+		nominalThreshold = DEFAULT_NOMINAL_THRESHOLD;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+// Warning threshold handlers
+void AudioMonitorWindow::OnWarningDecrease()
+{
+	double minAllowed = nominalThreshold + NOMINAL_WARNING_GAP;
+	if (warningThreshold > minAllowed) {
+		warningThreshold -= THRESHOLD_STEP;
+		if (warningThreshold < minAllowed)
+			warningThreshold = minAllowed;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnWarningIncrease()
+{
+	double maxAllowed = errorThreshold - WARNING_ERROR_GAP;
+	if (warningThreshold < maxAllowed) {
+		warningThreshold += THRESHOLD_STEP;
+		if (warningThreshold > maxAllowed)
+			warningThreshold = maxAllowed;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnWarningReset()
+{
+	if (warningThreshold != DEFAULT_WARNING_THRESHOLD) {
+		warningThreshold = DEFAULT_WARNING_THRESHOLD;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+// Error threshold handlers
+void AudioMonitorWindow::OnErrorDecrease()
+{
+	double minAllowed = warningThreshold + WARNING_ERROR_GAP;
+	if (errorThreshold > minAllowed) {
+		errorThreshold -= THRESHOLD_STEP;
+		if (errorThreshold < minAllowed)
+			errorThreshold = minAllowed;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnErrorIncrease()
+{
+	if (errorThreshold < ERROR_THRESHOLD_MAX) {
+		errorThreshold += THRESHOLD_STEP;
+		if (errorThreshold > ERROR_THRESHOLD_MAX)
+			errorThreshold = ERROR_THRESHOLD_MAX;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnErrorReset()
+{
+	if (errorThreshold != DEFAULT_ERROR_THRESHOLD) {
+		errorThreshold = DEFAULT_ERROR_THRESHOLD;
+		UpdateThresholdControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnMixOffsetDecrease()
+{
+	if (mixOffset > MIX_OFFSET_MIN) {
+		mixOffset -= THRESHOLD_STEP;
+		if (mixOffset < MIX_OFFSET_MIN)
+			mixOffset = MIX_OFFSET_MIN;
+		UpdateMixOffsetControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnMixOffsetIncrease()
+{
+	if (mixOffset < MIX_OFFSET_MAX) {
+		mixOffset += THRESHOLD_STEP;
+		if (mixOffset > MIX_OFFSET_MAX)
+			mixOffset = MIX_OFFSET_MAX;
+		UpdateMixOffsetControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::OnMixOffsetReset()
+{
+	if (mixOffset != DEFAULT_MIX_OFFSET) {
+		mixOffset = DEFAULT_MIX_OFFSET;
+		UpdateMixOffsetControls();
+		ApplyThresholdsToAll();
+	}
+}
+
+void AudioMonitorWindow::UpdateMixOffsetControls()
+{
+	if (!mixOffsetMinusBtn || !mixOffsetPlusBtn || !mixOffsetValueBtn)
+		return;
+
+	// Update value button text
+	mixOffsetValueBtn->setText(QString::number((int)mixOffset));
+
+	// Update button enabled states
+	mixOffsetMinusBtn->setEnabled(mixOffset > MIX_OFFSET_MIN);
+	mixOffsetPlusBtn->setEnabled(mixOffset < MIX_OFFSET_MAX);
 }
