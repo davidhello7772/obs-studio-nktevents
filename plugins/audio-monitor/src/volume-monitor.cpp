@@ -37,8 +37,9 @@ void VolumeMonitor::stop()
 	}
 
 	// Clear all warnings when stopping
+	// Note: null check added as defensive measure against race conditions during shutdown
 	for (auto *widget : monitorWindow->GetSourceWidgets().values()) {
-		if (widget->GetWarningState() != AudioSourceWidget::WarningState::None) {
+		if (widget && widget->GetWarningState() != AudioSourceWidget::WarningState::None) {
 			widget->SetWarningState(AudioSourceWidget::WarningState::None);
 		}
 	}

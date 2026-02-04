@@ -11,8 +11,10 @@
 #include <obs-module.h>
 
 #include <QColorDialog>
+#include <QDrag>
 #include <QHBoxLayout>
 #include <QIcon>
+#include <QMimeData>
 #include <QPalette>
 #include <QVBoxLayout>
 
@@ -1134,4 +1136,46 @@ void AudioSourceWidget::UpdateMonitorButtonStyle()
 			"} "
 			"QPushButton:hover { background-color: rgba(184, 184, 184, 0.2); }");
 	}
+}
+
+// ============================================================================
+// Drag-and-Drop Support
+// ============================================================================
+
+void AudioSourceWidget::mousePressEvent(QMouseEvent *event)
+{
+	if (event->button() == Qt::LeftButton) {
+		dragStartPosition = event->pos();
+	}
+	QFrame::mousePressEvent(event);
+}
+
+void AudioSourceWidget::mouseMoveEvent(QMouseEvent *event)
+{
+	if (!(event->buttons() & Qt::LeftButton)) {
+		QFrame::mouseMoveEvent(event);
+		return;
+	}
+
+	if ((event->pos() - dragStartPosition).manhattanLength() < DRAG_THRESHOLD) {
+		QFrame::mouseMoveEvent(event);
+		return;
+	}
+
+	QDrag *drag = new QDrag(this);
+	QMimeData *mimeData = new QMimeData;
+
+	mimeData->setData("application/x-audio-monitor-widget",
+			  GetSourceUuid().toUtf8());
+	drag->setMimeData(mimeData);
+
+	QPixmap pixmap = grab();
+	pixmap = pixmap.scaled(static_cast<int>(width() * 0.8),
+			       static_cast<int>(height() * 0.8),
+			       Qt::KeepAspectRatio,
+			       Qt::SmoothTransformation);
+	drag->setPixmap(pixmap);
+	drag->setHotSpot(QPoint(pixmap.width() / 2, 20));
+
+	drag->exec(Qt::MoveAction);
 }

@@ -6,10 +6,12 @@
 #include "audio-monitor-window.hpp"
 #include "audio-source-widget.hpp"
 #include "constants.h"
+#include "draggable-card-container.hpp"
 #include "volume-monitor.hpp"
 
 #include <obs-module.h>
 
+#include <QCoreApplication>
 #include <QIcon>
 #include <QLabel>
 
@@ -39,14 +41,16 @@ AudioMonitorWindow::AudioMonitorWindow(QWidget *parent)
 	scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	scrollArea->setStyleSheet("QScrollArea { background-color: #1D1F26; border: none; }");
 
-	containerWidget = new QWidget();
-	containerWidget->setStyleSheet("background-color: #1D1F26;");
-	containerLayout = new QHBoxLayout(containerWidget);
-	containerLayout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-	containerLayout->setSpacing(12);  // Gap between cards
-	containerLayout->setContentsMargins(16, 16, 16, 16);
+	// Use draggable container for reorderable cards
+	draggableContainer = new DraggableCardContainer();
+	draggableContainer->setStyleSheet("background-color: #1D1F26;");
+	draggableContainer->setSpacing(12);
+	draggableContainer->setContentsMargins(16, 16, 16, 16);
 
-	scrollArea->setWidget(containerWidget);
+	connect(draggableContainer, &DraggableCardContainer::orderChanged,
+		this, &AudioMonitorWindow::OnSourceOrderChanged);
+
+	scrollArea->setWidget(draggableContainer);
 	mainLayout->addWidget(scrollArea);
 
 	setLayout(mainLayout);
@@ -63,23 +67,27 @@ AudioMonitorWindow::AudioMonitorWindow(QWidget *parent)
 
 AudioMonitorWindow::~AudioMonitorWindow()
 {
-	// 1. Stop volume monitor (must stop before widgets are deleted)
+	// 1. FIRST: Disconnect global signal handlers to stop new events from being queued
+	// This must happen before any cleanup to prevent race conditions
+	DisconnectSignals();
+
+	// 2. Process any already-queued Qt events to clear the queue
+	// This ensures no pending RemoveSourceByUuid callbacks execute during cleanup
+	QCoreApplication::processEvents();
+
+	// 3. Now safe to stop volume monitor (no more signal callbacks can fire)
 	if (volumeMonitor) {
 		volumeMonitor->stop();
 		// Qt will delete volumeMonitor since it's a child of this window
 	}
 
-	// 2. Disconnect global signal handlers (before widgets are deleted)
-	DisconnectSignals();
-
-	// 3. Delete all source widgets explicitly (triggers their destructors)
-	// This is explicit because widgets are tracked in sourceWidgets map
-	for (auto *widget : sourceWidgets.values()) {
-		delete widget;
+	// 4. Clear all source widgets via the container (handles deletion)
+	if (draggableContainer) {
+		draggableContainer->clear();
 	}
 	sourceWidgets.clear();
 
-	// Qt will then delete remaining child objects (containerWidget, scrollArea, etc.)
+	// Qt will then delete remaining child objects (draggableContainer, scrollArea, etc.)
 }
 
 void AudioMonitorWindow::ConnectSignals()
@@ -127,10 +135,9 @@ void AudioMonitorWindow::ToggleShowHide()
 
 void AudioMonitorWindow::RefreshSources()
 {
-	// Clear existing widgets
-	for (auto *widget : sourceWidgets.values()) {
-		containerLayout->removeWidget(widget);
-		delete widget;
+	// Clear existing widgets via container
+	if (draggableContainer) {
+		draggableContainer->clear();
 	}
 	sourceWidgets.clear();
 
@@ -143,6 +150,11 @@ void AudioMonitorWindow::RefreshSources()
 		return true;
 	};
 	obs_enum_sources(enumProc, this);
+
+	// Apply saved order after adding all sources
+	if (!sourceOrder.isEmpty() && draggableContainer) {
+		draggableContainer->setOrder(sourceOrder);
+	}
 }
 
 bool AudioMonitorWindow::ShouldShowSource(obs_source_t *source)
@@ -205,8 +217,10 @@ void AudioMonitorWindow::AddSource(obs_source_t *source)
 
 	sourceWidgets[uuid] = widget;
 
-	// Add widget to layout (spacing handled by containerLayout)
-	containerLayout->addWidget(widget);
+	// Add widget to draggable container (handles ordering)
+	if (draggableContainer) {
+		draggableContainer->addWidget(widget, uuid);
+	}
 
 	// Update preset button states
 	UpdatePresetButtonStates();
@@ -233,8 +247,13 @@ void AudioMonitorWindow::RemoveSourceByUuid(const QString &uuid)
 		referenceUuid.clear();
 	}
 
-	AudioSourceWidget *widget = sourceWidgets.take(uuid);
-	containerLayout->removeWidget(widget);
+	sourceWidgets.remove(uuid);
+
+	// Remove from container (returns widget, doesn't delete)
+	QWidget *widget = nullptr;
+	if (draggableContainer) {
+		widget = draggableContainer->removeWidget(uuid);
+	}
 	delete widget;
 }
 
@@ -353,6 +372,15 @@ void AudioMonitorWindow::SaveLoadColorSettings(obs_data_t *save_data, bool savin
 
 		// Save Mix offset
 		obs_data_set_double(save_data, "audio_monitor_mix_offset", mixOffset);
+
+		// Save source order as array
+		OBSDataArrayAutoRelease orderArray = obs_data_array_create();
+		for (const QString &uuid : sourceOrder) {
+			OBSDataAutoRelease item = obs_data_create();
+			obs_data_set_string(item, "uuid", uuid.toUtf8().constData());
+			obs_data_array_push_back(orderArray, item);
+		}
+		obs_data_set_array(save_data, "audio_monitor_source_order", orderArray);
 	} else {
 		// Load card width
 		int loadedWidth = (int)obs_data_get_int(save_data, "audio_monitor_card_width");
@@ -457,7 +485,21 @@ void AudioMonitorWindow::SaveLoadColorSettings(obs_data_t *save_data, bool savin
 		UpdateThresholdControls();
 		UpdateMixOffsetControls();
 
-		// Refresh widgets with loaded colors, types, filter levels, and thresholds
+		// Load source order
+		sourceOrder.clear();
+		OBSDataArrayAutoRelease orderArray = obs_data_get_array(save_data, "audio_monitor_source_order");
+		if (orderArray) {
+			size_t count = obs_data_array_count(orderArray);
+			for (size_t i = 0; i < count; i++) {
+				OBSDataAutoRelease item = obs_data_array_item(orderArray, i);
+				const char *uuid = obs_data_get_string(item, "uuid");
+				if (uuid && *uuid) {
+					sourceOrder.append(QString::fromUtf8(uuid));
+				}
+			}
+		}
+
+		// Refresh widgets with loaded colors, types, filter levels, thresholds, and order
 		RefreshSources();
 	}
 }
@@ -716,6 +758,11 @@ void AudioMonitorWindow::OnFilterLevelChanged(AudioSourceWidget *widget, int new
 	QString uuid = widget->GetSourceUuid();
 	filterLevels[uuid] = newLevel;
 	UpdatePresetButtonStates();
+}
+
+void AudioMonitorWindow::OnSourceOrderChanged(const QStringList &newOrder)
+{
+	sourceOrder = newOrder;
 }
 
 // ============================================================================

@@ -28,8 +28,10 @@
 #include <QMap>
 #include <QPushButton>
 #include <QScrollArea>
+#include <QStringList>
 #include <QVBoxLayout>
 
+class DraggableCardContainer;
 class VolumeMonitor;
 
 class AudioMonitorWindow : public QDialog {
@@ -112,6 +114,7 @@ private slots:
 	void OnCardWidthDecrease();
 	void OnCardWidthIncrease();
 	void OnCardWidthReset();
+	void OnSourceOrderChanged(const QStringList &newOrder);
 
 	// Threshold control slots
 	void OnNominalDecrease();
@@ -134,8 +137,7 @@ private:
 	QPushButton *presetMeditation;
 	QPushButton *presetNoFilter;
 	QScrollArea *scrollArea;
-	QWidget *containerWidget;
-	QHBoxLayout *containerLayout;
+	DraggableCardContainer *draggableContainer;
 
 	// Card width controls
 	QPushButton *widthDecreaseBtn;
@@ -168,6 +170,9 @@ private:
 
 	// Source tracking: source UUID -> widget
 	QMap<QString, AudioSourceWidget *> sourceWidgets;
+
+	// Source display order (persisted)
+	QStringList sourceOrder;
 
 	// Filter level persistence
 	QMap<QString, int> filterLevels;  // uuid -> filter level (0/1/2)

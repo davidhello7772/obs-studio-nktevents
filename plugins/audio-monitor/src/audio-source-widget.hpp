@@ -28,6 +28,8 @@
 #include <QColor>
 #include <QFrame>
 #include <QLabel>
+#include <QMouseEvent>
+#include <QPoint>
 #include <QPushButton>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -169,6 +171,10 @@ signals:
 	void sourceTypeChanged(AudioSourceWidget *widget, SourceType newType);
 	void filterLevelChanged(AudioSourceWidget *widget, int newLevel);
 
+protected:
+	void mousePressEvent(QMouseEvent *event) override;
+	void mouseMoveEvent(QMouseEvent *event) override;
+
 private slots:
 	void OnColorButtonClicked();
 	void OnTypeMixClicked();
@@ -232,6 +238,10 @@ private:
 	// Warning animation
 	QTimer *blinkTimer = nullptr;
 	bool blinkVisible = true;
+
+	// Drag-and-drop
+	QPoint dragStartPosition;
+	static constexpr int DRAG_THRESHOLD = 10;
 
 	void UpdateBackgroundStyle();
 	void UpdateTypeButtonsStyle();
