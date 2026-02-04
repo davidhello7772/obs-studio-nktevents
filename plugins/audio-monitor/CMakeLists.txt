@@ -25,6 +25,8 @@ target_sources(
           src/audio-source-widget.cpp
           src/audio-source-widget.hpp
           src/constants.h
+          src/draggable-card-container.cpp
+          src/draggable-card-container.hpp
           src/filter-item-widget.cpp
           src/filter-item-widget.hpp
           src/filter-list-widget.cpp
