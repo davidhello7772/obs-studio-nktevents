@@ -71,4 +71,7 @@ private:
 	// Track how long each translated source has been in warning condition
 	QMap<QString, qint64> lowVolumeStartTime;
 	QMap<QString, qint64> highVolumeStartTime;
+
+	// Guards against double stop() calls during destruction
+	bool stopped = false;
 };

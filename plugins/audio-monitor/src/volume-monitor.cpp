@@ -24,6 +24,7 @@ VolumeMonitor::~VolumeMonitor()
 void VolumeMonitor::start()
 {
 	if (!checkTimer->isActive()) {
+		stopped = false;  // Reset guard to allow stop() to run
 		lowVolumeStartTime.clear();
 		highVolumeStartTime.clear();
 		checkTimer->start(1000);  // Check every 1 second
@@ -32,6 +33,13 @@ void VolumeMonitor::start()
 
 void VolumeMonitor::stop()
 {
+	// Guard against double stop() calls during destruction.
+	// This prevents accessing sourceWidgets after it has been cleared
+	// in AudioMonitorWindow destructor but before VolumeMonitor destructor runs.
+	if (stopped)
+		return;
+	stopped = true;
+
 	if (checkTimer->isActive()) {
 		checkTimer->stop();
 	}
