@@ -58,7 +58,7 @@ typedef enum {
 - (instancetype)init
 {
     if (self = [super init]) {
-        _stateQueue = dispatch_queue_create("com.obsproject.obs-mac-virtualcam.dal.state", DISPATCH_QUEUE_SERIAL);
+        _stateQueue = dispatch_queue_create("com.12tracksmultilingual.obs-mac-virtualcam.dal.state", DISPATCH_QUEUE_SERIAL);
 
         _timeoutTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, _stateQueue);
         __weak __typeof(self) weakSelf = self;
