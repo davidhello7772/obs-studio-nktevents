@@ -200,9 +200,9 @@ build() {
         } else {
           run_xcodebuild ${build_args}
 
-          rm -rf OBS.app
-          mkdir OBS.app
-          ditto frontend/${config}/OBS.app OBS.app
+          rm -rf "12 Tracks Multilingual.app"
+          mkdir "12 Tracks Multilingual.app"
+          ditto "frontend/${config}/12 Tracks Multilingual.app" "12 Tracks Multilingual.app"
         }
       }
       popd

@@ -127,7 +127,7 @@ package() {
   }
 
   if [[ ${host_os} == macos ]] {
-    if [[ ! -d build_macos/OBS.app ]] {
+    if [[ ! -d "build_macos/12 Tracks Multilingual.app" ]] {
       log_error 'No application bundle found. Run the build script to create a valid application bundle.'
       return 0
     }
@@ -137,9 +137,9 @@ package() {
 
     local volume_name
     if (( commit_distance > 0 )) {
-      volume_name="OBS Studio ${commit_version}-${commit_hash} (${arch_names[${target##*-}]})"
+      volume_name="12 Tracks Multilingual ${commit_version}-${commit_hash} (${arch_names[${target##*-}]})"
     } else {
-      volume_name="OBS Studio ${commit_version} (${arch_names[${target##*-}]})"
+      volume_name="12 Tracks Multilingual ${commit_version} (${arch_names[${target##*-}]})"
     }
 
     if (( package )) {
@@ -151,8 +151,8 @@ package() {
       ln -s /Applications obs-studio/Applications
       cp ${project_root}/cmake/macos/resources/README-Unsigned.txt obs-studio/README.txt
 
-      mkdir -p obs-studio/OBS.app
-      ditto OBS.app obs-studio/OBS.app
+      mkdir -p "obs-studio/12 Tracks Multilingual.app"
+      ditto "12 Tracks Multilingual.app" "obs-studio/12 Tracks Multilingual.app"
 
       local -i _status=0
 
@@ -192,7 +192,7 @@ package() {
     } else {
       log_group "Archiving obs-studio..."
       pushd build_macos
-      XZ_OPT=-T0 tar -cvJf ${output_name}.tar.xz OBS.app
+      XZ_OPT=-T0 tar -cvJf ${output_name}.tar.xz "12 Tracks Multilingual.app"
       popd
     }
 
