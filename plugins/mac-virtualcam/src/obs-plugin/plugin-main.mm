@@ -125,7 +125,7 @@ struct virtualcam_data {
 static void install_cmio_system_extension(struct virtualcam_data *vcam)
 {
     OSSystemExtensionRequest *request = [OSSystemExtensionRequest
-        activationRequestForExtension:@"com.obsproject.obs-studio.mac-camera-extension"
+        activationRequestForExtension:@"com.12tracksmultilingual.obs-12tracks-multilingual.mac-camera-extension"
                                 queue:dispatch_get_main_queue()];
     request.delegate = vcam->extensionDelegate;
 
@@ -382,7 +382,7 @@ static bool virtualcam_output_start(void *data)
         CMIOObjectGetPropertyData(kCMIOObjectSystemObject, &address, 0, NULL, size, &used, device_data);
 
         vcam->deviceID = 0;
-        NSString *OBSVirtualCamUUIDString = [[NSBundle bundleWithIdentifier:@"com.obsproject.mac-virtualcam"]
+        NSString *OBSVirtualCamUUIDString = [[NSBundle bundleWithIdentifier:@"com.12tracksmultilingual.obs-mac-virtualcam"]
             objectForInfoDictionaryKey:@"OBSCameraDeviceUUID"];
         CFUUIDRef OBSVirtualCamUUID =
             CFUUIDCreateFromString(kCFAllocatorDefault, (CFStringRef) OBSVirtualCamUUIDString);

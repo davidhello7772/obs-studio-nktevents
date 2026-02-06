@@ -60,7 +60,7 @@ set_target_xcode_properties(
              CLANG_WARN_SUSPICIOUS_IMPLICIT_CONVERSION YES
              GCC_WARN_SHADOW YES
              PRODUCT_NAME obs-mac-virtualcam
-             PRODUCT_BUNDLE_IDENTIFIER com.obsproject.obs-mac-virtualcam
+             PRODUCT_BUNDLE_IDENTIFIER com.12tracksmultilingual.obs-mac-virtualcam
              CURRENT_PROJECT_VERSION ${OBS_BUILD_NUMBER}
              MARKETING_VERSION ${OBS_VERSION_CANONICAL}
              GENERATE_INFOPLIST_FILE YES
