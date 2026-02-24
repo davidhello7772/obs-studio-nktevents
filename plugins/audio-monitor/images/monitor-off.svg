@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <!-- Headphones outline (grayed out) -->
+  <!-- Headphones outline (inactive/off state — white at reduced opacity) -->
   <path d="M12 3C7.03 3 3 7.03 3 12v6c0 1.1.9 2 2 2h2v-8H5v-2c0-3.87 3.13-7 7-7s7 3.13 7 7v2h-2v8h2c1.1 0 2-.9 2-2v-6c0-4.97-4.03-9-9-9z"
-        fill="none" stroke="#888888" stroke-width="1.5" opacity="0.6"/>
+        fill="none" stroke="#FFFFFF" stroke-width="1.5" opacity="0.55"/>
   <!-- Left ear cup -->
-  <rect x="4" y="12" width="3" height="8" rx="1" fill="#888888" opacity="0.5"/>
+  <rect x="4" y="12" width="3" height="8" rx="1" fill="#FFFFFF" opacity="0.55"/>
   <!-- Right ear cup -->
-  <rect x="17" y="12" width="3" height="8" rx="1" fill="#888888" opacity="0.5"/>
+  <rect x="17" y="12" width="3" height="8" rx="1" fill="#FFFFFF" opacity="0.55"/>
   <!-- Diagonal strike-through -->
-  <line x1="4" y1="4" x2="20" y2="20" stroke="#888888" stroke-width="2.5" stroke-linecap="round"/>
+  <line x1="4" y1="4" x2="20" y2="20" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
 </svg>

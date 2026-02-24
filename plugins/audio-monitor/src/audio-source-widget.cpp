@@ -128,7 +128,7 @@ AudioSourceWidget::AudioSourceWidget(obs_source_t *src, const QColor &color, QWi
 	// Divider line
 	QFrame *divider1 = new QFrame();
 	divider1->setFrameShape(QFrame::HLine);
-	divider1->setStyleSheet("background-color: rgba(255, 255, 255, 0.1);");
+	divider1->setStyleSheet("background-color: rgba(255, 255, 255, 0.22);");
 	divider1->setFixedHeight(1);
 	QHBoxLayout *divider1Layout = new QHBoxLayout();
 	divider1Layout->setContentsMargins(13, 0, 13, 0);
@@ -141,7 +141,7 @@ AudioSourceWidget::AudioSourceWidget(obs_source_t *src, const QColor &color, QWi
 	// Divider line
 	QFrame *divider2 = new QFrame();
 	divider2->setFrameShape(QFrame::HLine);
-	divider2->setStyleSheet("background-color: rgba(255, 255, 255, 0.1);");
+	divider2->setStyleSheet("background-color: rgba(255, 255, 255, 0.22);");
 	divider2->setFixedHeight(1);
 	QHBoxLayout *divider2Layout = new QHBoxLayout();
 	divider2Layout->setContentsMargins(13, 0, 13, 0);
@@ -441,63 +441,63 @@ void AudioSourceWidget::UpdateTypeBadge()
 
 void AudioSourceWidget::UpdateTypeButtonsStyle()
 {
-	// Style for inactive (unselected) buttons
+	// Style for inactive (unselected) buttons — clearly readable but visually recessed
 	QString inactiveStyle =
 		"QPushButton { "
-		"  background-color: rgba(255, 255, 255, 0.08); "
-		"  border: 1px solid rgba(255, 255, 255, 0.12); "
+		"  background-color: rgba(255, 255, 255, 0.1); "
+		"  border: 1px solid rgba(255, 255, 255, 0.18); "
 		"  border-radius: 3px; "
-		"  color: rgba(255, 255, 255, 0.5); "
-		"  font-size: 9px; "
+		"  color: rgba(255, 255, 255, 0.65); "
+		"  font-size: 10px; "
 		"  font-weight: 600; "
 		"  padding: 2px 6px; "
 		"} "
 		"QPushButton:hover { "
-		"  background-color: rgba(255, 255, 255, 0.15); "
-		"  color: rgba(255, 255, 255, 0.8); "
+		"  background-color: rgba(255, 255, 255, 0.18); "
+		"  color: rgba(255, 255, 255, 0.9); "
 		"}";
 
-	// Active styles with specific colors
+	// Active styles: solid opaque fill + pure white text for maximum contrast
 	QString activeMixStyle =
 		"QPushButton { "
-		"  background-color: rgba(255, 107, 53, 0.3); "
-		"  border: 1px solid #FF6B35; "
+		"  background-color: #FF6B35; "
+		"  border: none; "
 		"  border-radius: 3px; "
-		"  color: #FF6B35; "
-		"  font-size: 9px; "
-		"  font-weight: 600; "
+		"  color: #FFFFFF; "
+		"  font-size: 10px; "
+		"  font-weight: 700; "
 		"  padding: 2px 6px; "
 		"} "
 		"QPushButton:hover { "
-		"  background-color: rgba(255, 107, 53, 0.4); "
+		"  background-color: #FF835A; "
 		"}";
 
 	QString activeTransStyle =
 		"QPushButton { "
-		"  background-color: rgba(74, 144, 217, 0.3); "
-		"  border: 1px solid #4A90D9; "
+		"  background-color: #4A90D9; "
+		"  border: none; "
 		"  border-radius: 3px; "
-		"  color: #4A90D9; "
-		"  font-size: 9px; "
-		"  font-weight: 600; "
+		"  color: #FFFFFF; "
+		"  font-size: 10px; "
+		"  font-weight: 700; "
 		"  padding: 2px 6px; "
 		"} "
 		"QPushButton:hover { "
-		"  background-color: rgba(74, 144, 217, 0.4); "
+		"  background-color: #5FA3E8; "
 		"}";
 
 	QString activeRefStyle =
 		"QPushButton { "
-		"  background-color: rgba(155, 89, 182, 0.3); "
-		"  border: 1px solid #9B59B6; "
+		"  background-color: #9B59B6; "
+		"  border: none; "
 		"  border-radius: 3px; "
-		"  color: #9B59B6; "
-		"  font-size: 9px; "
-		"  font-weight: 600; "
+		"  color: #FFFFFF; "
+		"  font-size: 10px; "
+		"  font-weight: 700; "
 		"  padding: 2px 6px; "
 		"} "
 		"QPushButton:hover { "
-		"  background-color: rgba(155, 89, 182, 0.4); "
+		"  background-color: #AD6DC6; "
 		"}";
 
 	// Apply styles based on current type
@@ -814,53 +814,43 @@ void AudioSourceWidget::OnFilterLevelDown()
 
 void AudioSourceWidget::UpdateFilterLevelDisplay()
 {
-	if (!filterMinusBtn || !filterPlusBtn || !filterLevelLabel || !filterDot1 || !filterDot2)
+	if (!filterMinusBtn || !filterPlusBtn || !filterLevelBadge)
 		return;
 
 	// Update button enabled states
 	filterMinusBtn->setEnabled(filterLevel > 0);
 	filterPlusBtn->setEnabled(filterLevel < MAX_RNNOISE_FILTERS);
 
-	// Update label and colors
-	QString labelText;
-	QString labelColor;
-	QString dot1Color;
-	QString dot2Color;
-	QString dot1Shadow;
-	QString dot2Shadow;
-
+	// Update pill badge: solid fill for active states, muted for OFF
 	switch (filterLevel) {
-	case 0:  // OFF
-		labelText = obs_module_text("AudioMonitor.FilterLevel.Off");
-		labelColor = "#B8B8B8";  // Muted
-		dot1Color = "rgba(255, 255, 255, 0.2)";
-		dot2Color = "rgba(255, 255, 255, 0.2)";
-		dot1Shadow = "none";
-		dot2Shadow = "none";
+	case 0:  // OFF — muted, clearly inactive
+		filterLevelBadge->setText(obs_module_text("AudioMonitor.FilterLevel.Off"));
+		filterLevelBadge->setStyleSheet(
+			"background-color: rgba(184, 184, 184, 0.25); "
+			"color: rgba(255, 255, 255, 0.55); "
+			"font-size: 11px; font-weight: bold; "
+			"border-radius: 11px; "
+			"border: 1px solid rgba(255,255,255,0.15);");
 		break;
-	case 1:  // LOW
-		labelText = obs_module_text("AudioMonitor.FilterLevel.Low");
-		labelColor = "#37D247";  // Green (success)
-		dot1Color = "#37D247";
-		dot2Color = "rgba(255, 255, 255, 0.2)";
-		dot1Shadow = "0 0 4px rgba(55, 210, 71, 0.6)";
-		dot2Shadow = "none";
+	case 1:  // LOW — solid green, immediately visible
+		filterLevelBadge->setText(obs_module_text("AudioMonitor.FilterLevel.Low"));
+		filterLevelBadge->setStyleSheet(
+			"background-color: rgba(55, 210, 71, 0.85); "
+			"color: #FFFFFF; "
+			"font-size: 11px; font-weight: bold; "
+			"border-radius: 11px; "
+			"border: none;");
 		break;
-	case 2:  // HIGH
-		labelText = obs_module_text("AudioMonitor.FilterLevel.High");
-		labelColor = "#E5AF24";  // Orange (warning)
-		dot1Color = "#E5AF24";
-		dot2Color = "#E5AF24";
-		dot1Shadow = "0 0 4px rgba(229, 175, 36, 0.6)";
-		dot2Shadow = "0 0 4px rgba(229, 175, 36, 0.6)";
+	case 2:  // HIGH — solid orange, dark text for extra contrast
+		filterLevelBadge->setText(obs_module_text("AudioMonitor.FilterLevel.High"));
+		filterLevelBadge->setStyleSheet(
+			"background-color: rgba(229, 175, 36, 0.9); "
+			"color: #1A1A1A; "
+			"font-size: 11px; font-weight: bold; "
+			"border-radius: 11px; "
+			"border: none;");
 		break;
 	}
-
-	filterLevelLabel->setText(labelText);
-	filterLevelLabel->setStyleSheet(QString("color: %1; font-size: 8px; font-weight: 600; letter-spacing: 0.5px; background: transparent;").arg(labelColor));
-
-	filterDot1->setStyleSheet(QString("background-color: %1; border-radius: 3px;").arg(dot1Color));
-	filterDot2->setStyleSheet(QString("background-color: %1; border-radius: 3px;").arg(dot2Color));
 
 	// Calculate button text color based on blended background
 	// The controlsWell has 35% black overlay on card color
@@ -894,11 +884,10 @@ void AudioSourceWidget::UpdateFilterLevelDisplay()
 	bool plusEnabled = filterLevel < MAX_RNNOISE_FILTERS;
 
 	// Build stylesheets with calculated colors
-	// Use subtle borders that blend with the dark well background
 	QString enabledBtnStyle = QString(
 		"QPushButton { "
-		"  background-color: rgba(255, 255, 255, 0.1); "
-		"  border: 1px solid rgba(255, 255, 255, 0.15); "
+		"  background-color: rgba(255, 255, 255, 0.12); "
+		"  border: 1px solid rgba(255, 255, 255, 0.2); "
 		"  border-radius: 4px; "
 		"  color: %1; "
 		"  font-size: 16px; "
@@ -908,13 +897,13 @@ void AudioSourceWidget::UpdateFilterLevelDisplay()
 		"  margin: 0px; "
 		"} "
 		"QPushButton:hover { "
-		"  background-color: rgba(255, 255, 255, 0.2); "
+		"  background-color: rgba(255, 255, 255, 0.22); "
 		"}").arg(enabledTextColor.name());
 
 	QString disabledBtnStyle = QString(
 		"QPushButton { "
-		"  background-color: rgba(128, 128, 128, 0.08); "
-		"  border: 1px solid rgba(128, 128, 128, 0.12); "
+		"  background-color: rgba(128, 128, 128, 0.06); "
+		"  border: 1px solid rgba(128, 128, 128, 0.08); "
 		"  border-radius: 4px; "
 		"  color: %1; "
 		"  font-size: 16px; "
@@ -943,7 +932,7 @@ void AudioSourceWidget::CreateTypeControls(QVBoxLayout *parentLayout)
 	// Label row: "TYPE" text, centered
 	QLabel *textLabel = new QLabel(obs_module_text("AudioMonitor.Type.Label"));
 	textLabel->setAlignment(Qt::AlignCenter);
-	textLabel->setStyleSheet("color: #B8B8B8; font-size: 9px; font-weight: 500; letter-spacing: 0.5px; background: transparent;");
+	textLabel->setStyleSheet("color: rgba(255,255,255,0.75); font-size: 10px; font-weight: 600; letter-spacing: 1px; background: transparent;");
 	containerLayout->addWidget(textLabel);
 
 	// Control row: [MIX] [TRANS] [REF]
@@ -995,7 +984,7 @@ void AudioSourceWidget::CreateFilterLevelControls(QVBoxLayout *parentLayout)
 	// Label row: just "FILTER" text, centered
 	QLabel *textLabel = new QLabel(obs_module_text("AudioMonitor.FilterLevel.Label"));
 	textLabel->setAlignment(Qt::AlignCenter);
-	textLabel->setStyleSheet("color: #B8B8B8; font-size: 9px; font-weight: 500; letter-spacing: 0.5px; background: transparent;");
+	textLabel->setStyleSheet("color: rgba(255,255,255,0.75); font-size: 10px; font-weight: 600; letter-spacing: 1px; background: transparent;");
 	containerLayout->addWidget(textLabel);
 
 	// Control row: [-] [indicator] [+]
@@ -1012,29 +1001,25 @@ void AudioSourceWidget::CreateFilterLevelControls(QVBoxLayout *parentLayout)
 	filterMinusBtn->setToolTip(obs_module_text("AudioMonitor.FilterLevel.Decrease.Tooltip"));
 	connect(filterMinusBtn, &QPushButton::clicked, this, &AudioSourceWidget::OnFilterLevelDown);
 
-	// Indicator widget (dots + label) - transparent background
+	// Indicator widget — solid pill badge showing OFF / LOW / HIGH
 	filterIndicator = new QWidget();
 	filterIndicator->setAttribute(Qt::WA_TranslucentBackground);
 	QHBoxLayout *indicatorLayout = new QHBoxLayout(filterIndicator);
 	indicatorLayout->setContentsMargins(0, 0, 0, 0);
-	indicatorLayout->setSpacing(3);
+	indicatorLayout->setSpacing(0);
 
-	filterDot1 = new QWidget();
-	filterDot1->setFixedSize(6, 6);
-	filterDot1->setStyleSheet("background-color: rgba(255, 255, 255, 0.2); border-radius: 3px;");
+	filterLevelBadge = new QLabel(obs_module_text("AudioMonitor.FilterLevel.Off"));
+	filterLevelBadge->setAlignment(Qt::AlignCenter);
+	filterLevelBadge->setFixedHeight(22);
+	filterLevelBadge->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+	filterLevelBadge->setStyleSheet(
+		"background-color: rgba(184, 184, 184, 0.25); "
+		"color: rgba(255, 255, 255, 0.55); "
+		"font-size: 11px; font-weight: bold; "
+		"border-radius: 11px; "
+		"border: 1px solid rgba(255,255,255,0.15);");
 
-	filterDot2 = new QWidget();
-	filterDot2->setFixedSize(6, 6);
-	filterDot2->setStyleSheet("background-color: rgba(255, 255, 255, 0.2); border-radius: 3px;");
-
-	filterLevelLabel = new QLabel(obs_module_text("AudioMonitor.FilterLevel.Off"));
-	filterLevelLabel->setStyleSheet("color: #B8B8B8; font-size: 8px; font-weight: 600; letter-spacing: 0.5px; background: transparent;");
-
-	indicatorLayout->addStretch();
-	indicatorLayout->addWidget(filterDot1);
-	indicatorLayout->addWidget(filterDot2);
-	indicatorLayout->addWidget(filterLevelLabel);
-	indicatorLayout->addStretch();
+	indicatorLayout->addWidget(filterLevelBadge);
 
 	// Plus button - text with dynamic color
 	filterPlusBtn = new QPushButton("+");
@@ -1115,26 +1100,25 @@ void AudioSourceWidget::UpdateMonitorButtonStyle()
 	const QString colorSuccess = "#37D247";
 
 	if (isMonitoring) {
-		// Monitoring enabled - green active state
+		// Monitoring enabled — solid green, impossible to miss
 		monitorButton->setIcon(QIcon(":/audio-monitor/images/monitor-and-output.svg"));
-		monitorButton->setStyleSheet(QString(
+		monitorButton->setStyleSheet(
 			"QPushButton { "
-			"  background-color: rgba(55, 210, 71, 0.2); "
-			"  border: 1px solid %1; "
+			"  background-color: rgba(55, 210, 71, 0.85); "
+			"  border: none; "
 			"  border-radius: 4px; "
 			"} "
-			"QPushButton:hover { background-color: rgba(55, 210, 71, 0.3); }"
-		).arg(colorSuccess));
+			"QPushButton:hover { background-color: rgba(55, 210, 71, 1.0); }");
 	} else {
-		// Monitoring disabled - inactive state
+		// Monitoring disabled — dark background ensures white icon is always visible
 		monitorButton->setIcon(QIcon(":/audio-monitor/images/monitor-off.svg"));
 		monitorButton->setStyleSheet(
 			"QPushButton { "
-			"  background-color: transparent; "
-			"  border: 1px solid transparent; "
+			"  background-color: rgba(0, 0, 0, 0.45); "
+			"  border: 1px solid rgba(255, 255, 255, 0.12); "
 			"  border-radius: 4px; "
 			"} "
-			"QPushButton:hover { background-color: rgba(184, 184, 184, 0.2); }");
+			"QPushButton:hover { background-color: rgba(0, 0, 0, 0.6); }");
 	}
 }
 
