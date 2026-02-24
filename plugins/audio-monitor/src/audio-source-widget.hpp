@@ -217,9 +217,7 @@ private:
 	QPushButton *filterMinusBtn;
 	QPushButton *filterPlusBtn;
 	QWidget *filterIndicator;
-	QLabel *filterLevelLabel;
-	QWidget *filterDot1;
-	QWidget *filterDot2;
+	QLabel *filterLevelBadge;  // Solid pill badge: OFF (muted) / LOW (green) / HIGH (orange)
 	QWidget *meterWell;      // Dark overlay for meter
 	QWidget *controlsWell;   // Dark overlay for controls
 
