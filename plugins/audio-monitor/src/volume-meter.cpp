@@ -417,7 +417,7 @@ VolumeMeter::VolumeMeter(QWidget *parent, obs_volmeter_t *obs_volmeter, bool ver
 	magnitudeIntegrationTime = 0.3;          //  99% in 300 ms
 	peakHoldDuration = 20.0;                 //  20 seconds
 	inputPeakHoldDuration = 1.0;             //  1 second
-	meterThickness = 3;                      // Bar thickness in pixels
+	meterThickness = 9;                      // Bar thickness in pixels
 	meterFontScaling = 0.7;                  // Font size for numbers is 70% of Widget's font size
 	channels = (int)audio_output_get_channels(obs_get_audio());
 
@@ -495,8 +495,8 @@ inline void VolumeMeter::doLayout()
 	QMutexLocker locker(&dataMutex);
 
 	if (displayNrAudioChannels) {
-		int meterSize = std::floor(22 / displayNrAudioChannels);
-		setMeterThickness(std::clamp(meterSize, 3, 7));
+		int meterSize = std::floor(66 / displayNrAudioChannels);
+		setMeterThickness(std::clamp(meterSize, 9, 21));
 	}
 	recalculateLayout = false;
 
